@@ -828,3 +828,55 @@ firstListItem.insertAdjacentElement('afterbegin', newListItem);
 // this does NOT work, though. The firstListItem becomes the only list item with firstListItem as a child of it (no longer a part of ul)
 ```
 In general, use `beforeend` and `afterbegin` for `text`. Use `beforebegin` and `afterend` for `Element`.
+
+## Problems
+
+1. Assign class `heading` to first `h1` in the document.
+
+```js
+let heading = document.getElementById('primary_heading');
+heading.classList.add('heading');
+```
+
+2. Set the class of `ul` to `bulleted`.
+
+```js
+let ul = document.getElementById('list');
+ul.classList.add('bulleted');
+```
+
+3. Set the `onclick` property of link with id `toggle` to a function which makes the `div` with id `hidden` either visible or hidden. When visible, assign the class `hidden`, when hidden assign class `visible`. Function takes one argument, `e`. The first line of function is `e.preventDefault`. 
+
+```js
+let link = document.getElementById('toggle');
+link.onclick = function(e) {
+  e.preventDefault;
+  let d = document.getElementById('notice');
+  if (d.className === 'hidden') {
+    d.setAttribute('class', 'visible');
+  } else {
+    d.setAttribute('class', 'hidden');
+  }
+};
+```
+
+4. Add an `onclick` event to the `notice` element. The function should set the class of the element to `hidden`. 
+
+```js
+document.getElementById('notice').onclick = function(e) {
+  e.preventDefault;
+  this.setAttribute('class', 'hidden');
+}
+```
+
+5. Change multiplcation to actual product.
+
+```js
+document.getElementById('multiplcation').textContent = String(13 * 10);
+```
+
+6. Set the ID of the `body` element to `styled`. 
+
+```js
+document.body.setAttribute('id', 'styled');
+```
