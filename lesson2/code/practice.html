@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>title</title>
+    <meta charset="UTF-8">
+    <script>
+      document.addEventListener('DOMContentLoaded', function(event) {
+        var addButton = document.getElementById('add');
+        var output = document.getElementById('output');
+        let texty = document.getElementById('texty');
+        let msg = 'I am a poor boy; nobody loves me.';
+        var count = 0;
+
+        addButton.addEventListener('click', function(event) {
+          count += 1;
+          output.textContent = String(count);
+        });
+
+        texty.addEventListener('click', function(event) {
+          if (texty.childNodes.length > 1) {
+            return;
+          } else {
+            for (let i = 0; i < msg.length; i += 1) {
+              setTimeout(function() {
+                let newMsg = document.createTextNode(msg[i]);
+                texty.appendChild(newMsg);
+              }, i * 50);
+            }
+
+            return undefined;            
+          }
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <p>
+      <span id="output">0</span>
+      <button id="add">Add One</button>
+    </p>
+    <p id='texty'>Note: </p>
+  </body>
+</html>

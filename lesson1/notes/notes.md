@@ -880,3 +880,21 @@ document.getElementById('multiplcation').textContent = String(13 * 10);
 ```js
 document.body.setAttribute('id', 'styled');
 ```
+
+```js
+let a = 0;
+
+function walk(node, callback) {
+  callback(node);
+  a += 1;
+  for (let i = 0; i < node.childNodes.length; i += 1) {
+    walk(node.childNodes[i], callback);
+  }
+
+  return;
+}
+
+walk(document.body, function() {
+  return 'yes';
+});
+```
