@@ -199,3 +199,95 @@ This function forms a closure with retains a reference to `count`. That's import
 We assign variables to point at the `span` and `button` tags, so we can manipulate them with the event listener.
 
 `addButton` is assigned an event listener which invokes a function when `click`ed. The `count` is incremented and the `textContent` of the `span` tag is updated to point at the new `count` value.
+
+## Page Lifecycle Events
+
+When the page finishes loading is not an easy thing to identify. Different web pages have different resources, and thus, different loading times and requirements.
+
+For an HTML-only web page, the process of displaying the web page is as follows:
+
+1. HTML code received from server.
+2. Page displayed on screen.
+
+For most pages, however, there are more steps.
+
+1. HTML code received from server.
+2. HTML parsed and JavaScript evaluated.
+3. DOM constructed from parsed HTML.
+4. Page displayed on screen.
+5. Embedded assets are loaded.
+
+These steps are general enough to use as a mental model for how a web page is loaded.
+
+The `DOMContentLoaded` type is necessary because the JS is evaluated **prior** to the DOM construction and HTML processing. By using `DOMContentLoaded` we tell JS to only execute the function once the DOM has been fully loaded.
+
+> When the DOM is ready for interaction, this is called the **DOM Ready Event**. It's an imprecise term that has found a niche by jQuery's popularity.
+
+Let's add more steps to show how the 'example' we used was loaded by the browser.
+
+1. HTML code received from server.
+2. HTML parsed and JS evaluated.
+3. DOM constructed from parsed HTML.
+4. DOMContentLoaded event fires on document.
+5. Page displayed on screen.
+6. Embedded assets are loaded.
+7. load event fires on window.
+
+## User Events
+
+An interactive web application responds to user actions. Without user actions, the application wouldn't be useful at all. 
+
+### Adding Event Listeners
+
+Event listeners are also called **event handlers**. These are functions that the JS runtime calls when a particular event occurs. Follow 4 steps in setting up an event handler:
+
+1. Identify the event that must be handled.
+2. Identify the element that will receive the event.
+3. Define a function to call when this event occurs.
+4. Register the function as an event listener.
+
+Let's add an event listener in the following code.
+
+```html
+<html>
+  <head>
+    <title>Test Page</title>
+    <script>
+      function displayAlert() {
+        let msg = document.getElementById('message').value;
+        alert(msg);
+      }
+
+      document.addEventListener('DOMContentLoaded', function(event) {
+        let myButton = document.getElementById('alert');
+        myButton.addEventListener('click', displayAlert);
+      });
+    </script>
+  </head>
+  <body>
+    <textarea id="message"></textarea>
+    <button id="alert">Alert</button>
+  </body>
+</html>
+```
+First, we define an event listener for the document once the DOM is loaded. Once the DOM is loaded, add an event listener to `myButton`, which is the only `button` tag on the page.
+
+The `click` is the **listener** within the `DOMContentLoaded` event handler.
+
+Another way to do this is:
+
+```js
+document.addEventListener('DOMContentLoaded', function() {
+  let button = document.getElementById('alert');
+  button.onclick = displayAlert;
+});
+```
+`onclick` is a `GlobalEventHandler`, which is a mixin that allows developers to register functions as an event listener for an element in a different way. Instead of adding the `click` handler, we assign the listener to the `onclick` property of the `button` element.
+
+### The Event Object
+
+The argument passed to the event handler provides extra information about an event. It is an `Event` object that provides contextual information about the event.
+
+1. `type`: the name of the event: `click`
+2. `currentTarget`: the current object that the event object is on. This refers to the element that has the event listener attached to it.
+3. `target`: the initial object to receive notification of the event; the element clicked by the user.

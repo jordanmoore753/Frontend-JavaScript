@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Test Page</title>
+    <script>
+      function displayAlert() {
+        let msg = document.getElementById('message').value;
+        alert(msg);
+      }
+
+      document.addEventListener('DOMContentLoaded', function(event) {
+        let myButton = document.getElementById('alert');
+        myButton.addEventListener('click', displayAlert);
+      });
+    </script>
+  </head>
+  <body>
+    <textarea id="message"></textarea>
+    <button id="alert">Alert</button>
+  </body>
+</html>
