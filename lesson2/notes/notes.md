@@ -361,3 +361,163 @@ document.addEventListener('DOMContentLoaded', function(event) {
 ```
 
 That answer also includes backspacing for updating the character count.
+
+## Capturing and Bubbling
+
+Adding event listeners to elements is fine for small applications or pages where there isn't much else going on. There are downsides to the use of event listeners, though:
+
+1. Can only add event listeners when the DOM is ready (DOMContentLoaded).
+2. Must add event listeners manually after DOM is ready.
+3. Adding event handlers to many elements can be slow and create difficult code.
+
+**Event delegation** eliminates these problems. Before venturing into delegation, we must learn what **capturing** and **bubbling** are.
+
+### Capturing and Bubbling
+
+First, `currentTarget` of the event object refers to the object that the event handler was assigned to. The implicit context `this` of the event listener's function is `currentTarget`, which is the original object the event handler was assigned to.
+
+One event can trigger more than one handler. 
+
+**Capturing and bubbling** are phases that an event goes through after being fired. After an event is fired, the event is dispatched to the `window` object. Then, the event is sent to the `document` object, all the way down the hierarchy of nodes until we reach the `target`, which is the object that the event was fired upon initially. This process is called **capturing**, where we search from the `window` until finding the `target`. Next, we commence the **bubbling** phase, where the process reverses, and the event travels from the `target` all the way back to the `window`. As the event searches through the hierachy, the event is searching for event listeners on any of the DOM objects.
+
+This is why nested elements can invoke an event listener on a parent element. Since the **bubbling** phase by default is when the event fires on the target, the event can travel up the hierarchy of nodes and find the parent object with the event listener for firing. Then, this object can fire with the context of `target` as the original object that was clicked or acted upon to initiate the capturing.
+
+### Problems
+
+1. Reverse the order of alerts.
+
+```js
+var elem1 = document.querySelector('#elem1');
+var elem4 = document.querySelector('#elem4');
+
+elem1.addEventListener('click', function(event) {
+  alert(event.currentTarget.id);
+}, true); // true means that event listeners can fire during capturing phase
+
+elem4.addEventListener('click', function(event) {
+  alert(event.currentTarget.id);
+});
+```
+
+2. Predict the output.
+
+`1, 2, 4, 3`. 3 fires on the bubbling phase since its argument for `capture` is `false`, meaning that firing only occurs for that element during the bubbling phase, not the capture.
+
+3. How many alert boxes will be fired when yellow is clicked?
+
+`1, 4`. This happens because `0` is not a parent element of `4`, so it can not be fired as `4` is not a child of it. `1` is fired first because its `capture` is assigned to `true`, and `4` fires on the bubbling phase next.
+
+### More Practice
+
+1. Predict the output.
+
+`MAIN, DIV`. The event listener that fires first is the one which alerts the `tagName` of `target`, not `currentTarget`, since the event listener with the alert `target` is assigned first. Both of these events fire during the bubbling phase. A single element can have multiple of the same `type` event handlers, as shown by this example.
+
+2. Predict the output pressing yellow.
+
+`capturing, then bubbling`. The event listener for `capturing` is listening on the capture phase and fires once it reaches `#elem1`. Next, the event listener for `bubbling` is listening on the bubbling phase and fires once it reaches `#elem1`.
+
+3. Explain the output.
+
+`DIV, q, w, MAIN`. The event listener for `click` is fired first, since we click `elem1` first. This will alert `DIV` first since that's the tag name. The next event listener is `keypress` for `q`, and then `w` since we typed them in that order. The last event listener to fire is `MAIN` since that's the last thing clicked.
+
+## Preventing Propogation and Default Behaviors
+
+`stopPropogation` is a method which can be used to prevent the bubbling phase. If another event listener of the same type is fired first before the `target` with the use of `capture: true` in arguments, the `stopPropogation` will prevent the event handler from reaching the `target`; therefore, the `target` will not execute its function. This means that not only can `stopPropogation` stop the bubbling phase from happening, it can also stop the capturing phase early.
+
+`preventDefault` is another method which can be used to change an event's default behavior. One example would be the link's default behavior of opening a new page. By using `preventDefault`, we can prevent that action from occurring.
+
+```js
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelector('a').addEventListener('click', function(event) {
+    event.preventDefault(); // this prevents link from opening
+    alert('Following the link was prevented.');
+  });
+})
+```
+> Run `preventDefault` and `stopPropogation` immediately in a function. This can prevent difficult debugging due to unforeseen bugs, and also stresses the importance of either of these methods.
+
+The browser will wait for the propogation phases (capturing and bubbling) to finish before executing any default behavior. Executing `preventDefault` anywhere during propogation will prevent that behavior from being executed.
+
+## Event Delegation
+
+There are drawbacks to the way we've been adding event listeners.
+
+1. For a large application with thousands of event listeners, this strategy we've been employing simply won't work. It can fail easily by not attaching an event listener in the right spot, and is also costly from a performance standpoint. It'd be better to have all `button` tags delegate behavior up to a common object. 
+
+2. Any elements added **after** the DOM is loaded, say by user interaction, have to manually be added event listeners. Our strategy is only useful for adding event listeners to DOM objects.
+
+3. We've gotta wait for the DOM to be finished loading. This could produce timing problems if other code must wait also before it runs.
+
+**Event delegation** uses bubbling to address all three of these problems. Instead of adding a single listener to every element, add a listener to all of those element's parent element. Then, those elements can delegate that behavior/inherit the listener.
+
+This is similar to delegation in JS objects. One prototype object holds all of the behaviors common to its subtypes. The objects that spawn from this Object don't hold their own copies; rather, they delegate up the prototype chain to the prototype object and use its behavior. This is the same concept just with the DOM.
+
+## Event Loop
+
+These notes are from `What the heck is the event loop anyway?` by Philip Roberts.
+
+There is an event loop inside of JavaScript.
+
+WebAPIs are things that the browser provides. Methods like `setTimeout` are a part of this.
+
+### The Call Stack
+
+One thread == one call stack == one thing at a time!
+
+The call stack is a data structure which records **where** in the program we are. I believe this has to do with execution contexts.
+
+When we enter a function, we push something onto the stack, and when we return from the function, we pop from the stack. Here's an example:
+
+```js
+function multiply(a, b) {
+  return a * b;
+}
+
+function square(n) {
+  return multiply(n, n);
+}
+
+function printSquare(n) {
+  let squared = square(n);
+  console.log(squared);
+}
+
+printSquare(4);
+```
+The stack is pushed and popped from like so:
+
+1. `printSquare` is invoked. We push that function onto the stack. 
+Current stack: `[printSquare(4)]`.
+2. `square(4)` is invoked on first line of the function.
+Current stack: `[printSquare(4), square(4)]`.
+3. `multiply(4, 4)` is invoked from `square`. 
+Current stack: `[printSquare(4), square(4), multiply(4, 4)]`.
+4. Now, the stack must pop until the stack is empty. First goes `multiply`, then `square`, and then `printSquare`. Each time the function returns the `pop` occurs.
+
+### Blocking
+
+Blocking refers to functions on the call stack that are **slow**, because they block further actions until the current action is completed. The browser can only do one thing at a time. Asynchronous callbacks are the solution to this.
+
+### The Event Loop
+
+Things can be accomplished concurrently, which means more than one thing at a time. The methods provided to JS by WebAPIs can be run concurrently. 
+
+```js
+console.log('hi');
+
+setTimeout(function cb() {
+   console.log('there');
+}, 5000);
+
+console.log('js!');
+```
+The call stack in this exmaple is as follows: `[console.log(hi)]`, then `[setTimeout]`, then `[ console.log(js)]`; however, the `setTimeout` function is popped once the `timer` is handed over to the WebAPI. The webapi is running concurrently while `console.log(js)` is popped from the stack. When the `timer` is done, it pushes the `cb()` function onto the **task queue**.  This is a list of functions to push onto the stack when the stack is empty. 
+
+After 5 seconds, the `cb()` is pushed from webapi into the task queue. Since the stack is empty at that point, `cb()` is pushed onto the call stack to be invoked.
+
+The event loop's role in this is: look at the stack, look at the task queue. If the stack is empty, push the first element of the task queue onto the stack. Then, the function is invoked and the call stack and task queue are empty.
+
+If you used a `setTimeout` with `0` seconds, the execution would still be the same. The function gets deferred to the webapi and then to the task queue. Once the call stack is empty and has no functions left to invoke in the program, the task queue is addressed.
+
+The two examples above illustrate what happens when an async call happens. The call is handled partly by the webapi, when then defers its return function to the task queue, which then is executed once the call stack is empty and out of potential calls.
