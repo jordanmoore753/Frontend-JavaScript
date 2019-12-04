@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Guessing Game</title>
+  <link href="./style.css" rel="stylesheet">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      function randomNumber() {
+        return Math.floor(Math.random() * Math.floor(101));
+      }
+      
+      function resetGame(e) {
+        e.preventDefault();
+        prompt.textContent = 'Guess a number between 0 and 100.';
+        numInput.value = '0';
+        answer = randomNumber();
+        guessTotal = 0;
+        submit.disabled = false;
+      }
+      
+      function guessAction(e) {
+        e.preventDefault();
+        let coercedNum = Number(numInput.value);
+        let msg = '';
+        
+        if (coercedNum > 100 || coercedNum < 0) {
+          msg = 'Number must be within 0 and 100.'
+          prompt.textContent = msg;
+          return;
+        }
+        
+        if (coercedNum < answer) {
+          msg = `My number is higher than ${coercedNum}.`;
+          guessTotal += 1;
+        } else if (coercedNum > answer) {
+          msg = `My number is lower than ${coercedNum}.`;
+          guessTotal += 1;
+        } else {
+          msg = `You guessed it! It took you ${guessTotal} guesses.`;
+          submit.disabled = true;
+        }
+        
+        prompt.textContent = msg;
+      }
+      
+      let numInput = document.querySelector('input[type="number"]');
+      let submit = document.querySelector('input[type="submit"]');
+      let resetButton = document.querySelector('a');
+      let prompt = document.querySelector('p');
+      let answer = randomNumber();
+      let guessTotal = 0;
+      
+      submit.addEventListener('click', guessAction);
+      resetButton.addEventListener('click', resetGame);
+    });
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Number Guessing Game</h1>
+    <p>Guess a number between 0 and 100.</p>
+    <form action="" method="get">
+      <fieldset>
+        <input type="number" id="guess" max="100" min="0"/>
+        <input type="submit" value="Guess" />
+      </fieldset>
+    </form>
+    <a href="#">New game</a>
+  </main>
+</body>
+</html>
