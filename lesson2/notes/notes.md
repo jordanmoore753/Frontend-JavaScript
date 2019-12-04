@@ -291,3 +291,73 @@ The argument passed to the event handler provides extra information about an eve
 1. `type`: the name of the event: `click`
 2. `currentTarget`: the current object that the event object is on. This refers to the element that has the event listener attached to it.
 3. `target`: the initial object to receive notification of the event; the element clicked by the user.
+
+### Problems
+
+1. Add an event listener that moves the X to wherever the mouse clicks.
+
+```js
+document.addEventListener('click', function(event) {
+  let d = document.querySelector('.x');
+  d.style.left = String(event.clientX) + 'px';
+  d.style.top = String(event.clientY) + 'px';
+});
+```
+
+2. Update the answer so the 'x' moves when the mouse moves.
+
+```js
+document.addEventListener('mousemove', function(event) {
+    let d = document.querySelector('.x')
+    d.style.left = String(event.clientX) + 'px';
+    d.style.top = String(event.clientY) + 'px';
+    console.log(event.clientX)
+});
+```
+
+3. Add events that do: change X to red when 'r' is pressed; x to blue when 'b' is pressed; X to green when 'g'.
+
+```js
+document.addEventListener('keypress', function(event) {
+    let h = document.querySelector('.horizontal');
+    let v = document.querySelector('.vertical');
+    let newColor;
+  
+    if (event.key === 'r') {
+      newColor = 'red';
+    } else if (event.key === 'g') {
+      newColor = 'green';
+    } else if (event.key === 'b') {
+      newColor = 'blue';
+    }
+  
+    if (typeof newColor === 'string') {
+      h.style.background = newColor;
+      v.style.background = newColor;
+    }
+});
+```
+
+4. Write code that updates a counter while the user types into the textarea.
+
+```js
+document.addEventListener('DOMContentLoaded', function(event) {
+  let textArea = document.querySelector('textarea');
+  let count = document.querySelector('.counter');
+  let counter = 0;
+  
+  textArea.addEventListener('keyup', function(event) {
+    let k = event.key;
+    let msg = `${140 - textArea.textLength}`;
+    count.textContent = msg + ' characters remaining';
+    
+    if (textArea.textLength > 140) {
+      textArea.setAttribute('class', 'invalid');
+    } else {
+      textArea.className = '';
+    }
+  });
+});
+```
+
+That answer also includes backspacing for updating the character count.
