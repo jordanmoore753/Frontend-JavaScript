@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      #container {
+        background-color: blue;
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+    <title>Question</title>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        function childNodes(id) {
+          function incrementIndirect() {
+            let indirectNodes = 0;
+            
+            return {
+              increment: function(num) {
+                indirectNodes += num;
+              },
+              
+              num: function() {
+                return indirectNodes;
+              },
+            };
+          }
+          
+          let parentNode = document.getElementById(id);
+          let directNodes = parentNode.childNodes.length;
+          let incrementerObj = incrementIndirect();
+          
+          walk(parentNode, incrementerObj);
+          
+          return [directNodes, incrementerObj.num() - directNodes];
+        }
+        
+        function walk(node, obj) {
+          obj.increment(node.childNodes.length);
+          
+          for (let i = 0; i < node.childNodes.length; i += 1) {
+            walk(node.childNodes[i], obj);
+          }
+        }
+        
+        console.log(childNodes(9));
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id="1">
+      <h1 id="2">Hello, <em id="3">World</em></h1>
+      <p id="4">
+        Welcome to wonderland. This is an
+        <span id="5">awesome</span> place.
+      </p>
+      <a href="#" id="6"><strong id="7">Enter</strong></a>
+      <div id="8"><p id="9"><a href="#" id="10">Go back</a></p></div>
+    </div>
+  </body>
+</html>
