@@ -1,12 +1,24 @@
 async function getSchedules() {
-  let schedules = await fetch('http://localhost:3000/api/schedules')
+  let schedules = fetch('http://localhost:3000/api/schedules')
   .then(request => request.json())
-  .then(json => getAvailableSchedules(json))
-  .then(schedules => convertStaffAndCount(schedules))
-  .then(schedules => appendParagraphs(schedules))
   .catch(err => console.error(err));
 
-  return;
+  let timer = new Promise(function(resolve, reject) {
+    setTimeout(resolve, 5000, 'Timeout');
+  });
+
+  let outcome = Promise.race([timer, schedules])
+  .then(function(value) {
+    if (value !== 'Timeout') {
+      let schedules = getAvailableSchedules(value);
+      schedules = convertStaffAndCount(schedules);
+      appendParagraphs(schedules);
+    } else {
+      alert('We are experiencing heavy traffic. Please try again.');
+    }
+
+    return;
+  });
 }
 
 function getAvailableSchedules(allSchedules) {
@@ -30,11 +42,17 @@ function convertStaffAndCount(allSchedules) {
 function appendParagraphs(schedules) {
   staffIDS = Object.keys(schedules);
 
-  staffIDS.forEach(function(id) {
+  if (staffIDS.length === 0) {
     let idParagraph = document.createElement('p');
-    idParagraph.textContent = `The Staff member with ID #${id} has ${schedules[id]} spots available.`;
+    idParagraph.textContent = 'No Staff members have spots available.';
     document.getElementById('content').appendChild(idParagraph);
-  });
+  } else {
+    staffIDS.forEach(function(id) {
+      let idParagraph = document.createElement('p');
+      idParagraph.textContent = `The Staff member with ID #${id} has ${schedules[id]} spots available.`;
+      document.getElementById('content').appendChild(idParagraph);
+    });    
+  }
 
   return;
 }
