@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Bold Element + Custom</title>
+    <style>
+      .highlight {
+        border: 1px dotted black;
+      }
+
+      header li {
+        display: inline-block;
+      }
+
+      header ul {
+        padding: 0;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let storeUrl = 'https://ls-230-web-store-demo.herokuapp.com';
+        let request = new XMLHttpRequest();
+        let store = document.getElementById('store');
+
+        request.open('GET', 'https://ls-230-web-store-demo.herokuapp.com/products');
+
+        request.addEventListener('load', function(e) {
+          store.innerHTML = request.response;
+        });
+
+        request.send();
+
+        store.addEventListener('click', function(e) {
+          if (e.target.tagName !== 'A') {
+            return;
+          }
+
+          e.preventDefault();
+
+          // request on link
+
+          let itemRequest = new XMLHttpRequest();
+
+          itemRequest.open('GET', storeUrl + e.target.getAttribute('href'));
+
+          itemRequest.addEventListener('load', function(e) {
+            store.innerHTML = itemRequest.response;
+          });
+
+          itemRequest.send();
+        });
+
+        // edit form
+
+        store.addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          let form = e.target;
+          let data = { name: 'Purple Man', sku: 'pur453', price: 32122 };
+          data = JSON.stringify(data);
+          let request = new XMLHttpRequest();
+
+          request.open('POST', storeUrl + form.getAttribute('action'));
+          request.setRequestHeader('Authorization', 'token AUTH_TOKEN');
+          request.setRequestHeader('Content-Type', 'application/json');
+
+          request.addEventListener('load', function(e) {
+            store.innerHTML = request.response;
+          });
+
+          request.send(data);
+        });
+
+        document.getElementById('sub').addEventListener('click', function(e) {
+          e.preventDefault();
+
+          let data = { name: 'Purple Man', sku: 'pur453', price: '321' };
+          data = JSON.stringify(data);
+
+          let request = new XMLHttpRequest();
+
+          request.open('POST', storeUrl + '/v1/products');
+          request.setRequestHeader('Authorization', 'token AUTH_TOKEN');
+          request.setRequestHeader('Content-Type', 'application/json');
+
+          request.addEventListener('load', function(e) {
+            store.innerHTML = request.response;
+          });
+
+          request.send(data);          
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Existing Page</h1>
+    <div id="store"></div>
+    <button id="sub">Click To Submit</button>
+  </body>
+</html>

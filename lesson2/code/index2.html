@@ -3,13 +3,24 @@
   <head>
     <meta charset="utf-8">
     <title>Bold Element + Custom</title>
-    <script>
-      this.makeBold = function(element, func) {
-        element.style.fontWeight = 'bold';
-        if (func) {
-          func(element);
-        }
+    <style>
+      .highlight {
+        color: red;
       }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let d = document.querySelector('section');
+        
+        d.addEventListener('thing', function(e) {
+          d.style.fontWeight = 'bold';
+          d.classList.add(e.detail);
+        });
+
+        let bolded = new CustomEvent('thing', { detail: 'highlight'});
+
+        d.dispatchEvent(bolded);
+      });
     </script>
   </head>
   <body>

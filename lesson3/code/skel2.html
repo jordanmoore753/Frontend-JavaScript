@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Bold Element + Custom</title>
+    <style>
+      .highlight {
+        border: 1px dotted black;
+      }
+
+      header li {
+        display: inline-block;
+      }
+
+      header ul {
+        padding: 0;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let request = new XMLHttpRequest();
+        request.open('GET', 'https://api.github.com/repos/rails/rails');
+        request.responseType = 'json';
+
+        request.addEventListener('load', function(e) {
+          let data = request.response;
+          console.log(request.status);
+          console.log(data.open_issues_count);
+        });
+
+        request.addEventListener('error', function(e) {
+          console.log('The operation could not be completed.');
+          console.log(`Status code: ${request.status}`);
+        });
+
+        request.send();
+      });
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>

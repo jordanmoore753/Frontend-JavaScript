@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Bold Element + Custom</title>
+    <style>
+      .highlight {
+        color: red;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let classOptions = {
+          Vertebrate: ['Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich'],
+          'Warm-blooded': ['Bear', 'Whale', 'Ostrich'],
+          'Cold-blooded': ['Turtle', 'Salmon'],
+          Mammal: ['Bear', 'Whale'],
+          Bird: ['Ostrich'],
+        };
+
+        let animalOptions = {
+          Bear: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+          Turtle: ['Vertebrate', 'Cold-blooded'],
+          Whale: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+          Salmon: ['Vertebrate', 'Cold-blooded'],
+          Ostrich: ['Vertebrate', 'Warm-blooded', 'Bird'],
+        };
+
+        let animals = document.getElementById('animals');
+        let classifications = document.getElementById('animal-classifications');
+        let clearBtn = document.getElementById('clear');
+
+        function setOptions(select, filters) {
+          select.options.length = 0;
+          filters.forEach(function(value, index) {
+            select.options[index] = new Option(value);
+          });
+        }
+
+        classifications.addEventListener('change', function(e) {
+          let currentSelected = Array.from(classifications.children).filter((element) => element.selected === true)[0].textContent;
+
+          setOptions(animals, classOptions[currentSelected]);
+        });
+
+        animals.addEventListener('change', function(e) {
+          let currentSelected = Array.from(animals.children).filter((element) => element.selected === true)[0].textContent;
+
+          setOptions(classifications, animalOptions[currentSelected]);
+        });
+
+        clearBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          setOptions(classifications, ['Vertebrate', 'Warm-blooded', 'Cold-blooded', 'Mammal', 'Bird']);
+          setOptions(animals, ['Animals', 'Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich']);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <form id="selection-filters" method="post" action="#">
+      <select id="animal-classifications">
+        <option value="Classifications" selected>Classifications</option>
+        <option value="Vertebrate">Vertebrate</option>
+        <option value="Warm-blooded">Warm-blooded</option>
+        <option value="Cold-blooded">Cold-blooded</option>
+        <option value="Mammal">Mammal</option>
+        <option value="Bird">Bird</option>
+      </select>
+      <select id="animals">
+        <option value="Animals" selected>Animals</option>
+        <option value="Bear">Bear</option>
+        <option value="Turtle">Turtle</option>
+        <option value="Whale">Whale</option>
+        <option value="Salmon">Salmon</option>
+        <option value="Ostrich">Ostrich</option>    
+      </select>
+      <button id="clear">Clear</button>  
+    </form>
+  </body>
+</html>

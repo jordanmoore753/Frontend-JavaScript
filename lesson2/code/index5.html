@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Event Delegation Function</title>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        function delegateEvent(element, selector, type, callback) {
+          if (element === null) { return undefined; }
+
+          element.addEventListener(type, function(e) {
+            e.stopPropagation();
+            let matches = Array.from(element.querySelectorAll(selector));
+
+            if (matches.includes(e.target)) {
+              callback(e);
+            }
+          });           
+          
+          return true;
+        }
+        
+        var element1 = document.querySelector('table');
+        var element2 = document.querySelector('main h1');
+        var element3 = document.querySelector('main');
+        var callback = function(event) {
+          alert('Target: ' + event.target.tagName + '\nCurrent Target: ' + event.currentTarget.tagName);
+        };
+
+
+
+        // var newP = document.createElement('P');
+        // var newContent = document.createTextNode('New Paragraph');
+        // newP.appendChild(newContent);
+
+        // element2.appendChild(newP);
+
+        //delegateEvent(element1, 'p', 'click', callback);
+        //delegateEvent(element2, 'p', 'click', callback);
+        //delegateEvent(element2, 'p', 'click', callback);
+        //delegateEvent(element3, 'h1', 'click', callback);
+        //delegateEvent(element3, 'aside p', 'click', callback);
+        //delegateEvent(element2, 'p', 'click', callback);
+
+      });
+    </script>
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Header</h1>
+        <p>Content</p>
+      </section>
+      <aside>
+        <h2>Sub Side Notes</h2>
+        <p>Note 1</p>
+        <p>Note 2</p>
+      </aside>
+    </main>
+    <nav>
+      <p>Side Note</p>
+    </nav>
+  </body>
+</html>

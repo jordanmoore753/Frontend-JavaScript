@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Bold Element + Custom</title>
+    <style>
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        async function addP(msg) {
+          let parent = document.getElementById('store');
+          let newP = document.createElement('p');
+          newP.textContent = msg;
+
+          parent.appendChild(newP);
+          return 'The next message.';
+        }
+
+        function success(result) {
+          console.log(`Operation a success: ${result}.`);
+        }
+
+        function failure(result) {
+          console.log(`Operation a failure: ${result}.`);
+        }
+
+        document.getElementById('sub').addEventListener('click', function(e) {
+          addP('This is a new message.')
+          .then(function(result) {
+            return addP(result);
+          })
+          .then(function() {
+            return addP('One more message.');
+          })
+          .then(function(finalResult) {
+            console.log(finalResult + ' ' + 'Finished!');
+          })
+          .catch(failure);
+          });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Existing Page</h1>
+    <div id="store"></div>
+    <button id="sub">Click To Submit</button>
+  </body>
+</html>
