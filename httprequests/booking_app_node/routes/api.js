@@ -43,6 +43,7 @@ function generateSequence() {
  * 
  */
 router.get('/staff_members', function(req, res, next) {
+  res.set('Access-Control-Allow-Origin', '*');
   db.all('SELECT * FROM STAFFS;', function(err, rows) {
     res.json(rows);
   });
@@ -208,6 +209,8 @@ router.post('/staff_members', function(req, res, next) {
  */
 router.post('/schedules', function(req, res, next) {
   const schedules = req.body['schedules'];
+  res.set('Access-Control-Allow-Origin', '*');
+  
   if (areSchedulesValid(schedules)) {
     schedules.forEach(function(schedule) {
       db.run('INSERT INTO BOOKINGS (staff_id, date, time) VALUES ($staff_id, $date, $time);', {
