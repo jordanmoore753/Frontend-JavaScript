@@ -5,10 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style type="text/css">
+    body {
+      font-family: 'Monospace';
+    }
+
+    input {
+      display: block;
+      width: 300px;
+      margin: 10px 0;
+    }
+
+    input, label {
+      padding: 10px 0;
+      font-size: 1rem;
+    }
+
+    input[type=email]:focus, input[type=text]:focus {
+      background-color: #eee;
+      outline: none;
+    }
+
+    input[type=submit] {
+      padding: 5px 0;
+      background-color: #b0e0e6;
+      transition: background-color .3s;
+    }
+
+    input[type=submit]:hover {
+      background-color: #83ced8;
+    }
+
+    form {
+      width: 500px;
+    }
+  </style>
   <script src="javascripts/exercises.js"></script>
-  <script src="javascripts/delay.js"></script>
 </head>
 <body>
   <div id="content"></div>
+  <div id="register">
+    <form action="http://localhost:3000/api/staff_members" method="post">
+      <label for="email"><strong>Email</strong></label>
+      <input type="email" name="email" required>
+      <label for="name"><strong>User</strong></label>
+      <input type="text" name="name" required>
+      <input id="submit" type="submit" name="submitData">
+    </form>
+  </div>
 </body>
 </html>

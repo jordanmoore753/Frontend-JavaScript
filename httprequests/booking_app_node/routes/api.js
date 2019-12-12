@@ -140,6 +140,8 @@ router.get('/schedules', function(req, res, next) {
  *     ]
  */
 router.get('/schedules/:staff_id', function(req, res, next) {
+  res.set('Access-Control-Allow-Origin', '*');
+
   db.all(`SELECT * FROM BOOKINGS WHERE staff_id = ${req.params['staff_id']}`, function(err, rows) {
     res.json(rows);
   });
@@ -168,6 +170,7 @@ router.get('/schedules/:staff_id', function(req, res, next) {
 router.post('/staff_members', function(req, res, next) {
   const email = req.body['email'];
   const name = req.body['name'];
+  res.set('Access-Control-Allow-Origin', '*');
 
   if (!email || !name) {
     res.status(400).send('Staff can not be created. Check your inputs');

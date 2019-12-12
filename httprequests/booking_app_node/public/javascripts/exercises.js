@@ -7,7 +7,7 @@ async function getSchedules() {
     setTimeout(resolve, 5000, 'Timeout');
   });
 
-  let outcome = Promise.race([timer, schedules])
+  Promise.race([timer, schedules])
   .then(function(value) {
     if (value !== 'Timeout') {
       let schedules = getAvailableSchedules(value);
@@ -19,6 +19,20 @@ async function getSchedules() {
 
     return;
   });
+}
+
+async function addStaffMember(data) {
+  fetch('http://localhost:3000/api/staff_members', {
+    method: 'POST',
+    body: data,
+  })
+  .then(response => response.status === 201 ? response.json() : response)
+  .then(function(response) {
+    response['id'] ? alert(`Staff member with ID ${response['id']} created.`) : 
+                     alert('Staff cannot be created. Check your inputs.');
+    return;
+  })
+  .catch(err => console.error(err));
 }
 
 function getAvailableSchedules(allSchedules) {
@@ -58,5 +72,14 @@ function appendParagraphs(schedules) {
 }
 
 document.addEventListener('DOMContentLoaded', function(e) {
-  getSchedules();
+  let form = document.querySelector('form');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let data = new FormData(form);
+    addStaffMember(data);
+  });
+
+  // getSchedules();
 });
