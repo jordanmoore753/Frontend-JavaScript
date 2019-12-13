@@ -18,7 +18,7 @@
       font-size: 1rem;
     }
 
-    input, label {
+    input, label, select {
       padding: 10px 0;
       font-size: 1rem;
     }
@@ -50,12 +50,17 @@
       margin: 10px 0;
     }
   </style>
-  <script src="javascripts/schedules.js"></script>
+  <script src="javascripts/booking.js"></script>
 </head>
 <body>
-  <button id="add" type="submit">Add Schedule</button>
   <div id="content">
-      <input id="btn" type="submit">
+    <form id="scheduleForm">
+      <label id="avail">Available Schedules</label>
+      <select></select>
+      <label id="e">Email</label>
+      <input id="email_input" type="text" name="name" required>
+      <input id="bookingSubmit" type="submit" value="Submittal">
+    </form>
   </div>
 </body>
 </html>

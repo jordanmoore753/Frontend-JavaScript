@@ -91,27 +91,37 @@ document.addEventListener('DOMContentLoaded', function(e) {
     fetch('http://localhost:3000/api/staff_members')
     .then(request => request.json())
     .then(function(staffMembers) {
-      let json = [];
-
-      allForms.forEach(function(object) {
+      allForms = allForms.map(function(object) {
         let currentMember = staffMembers.filter((obj) => obj.name === object.name)[0];
 
-        json.push({
+        return {
           staff_id: currentMember.id,
           date: object.date,
           time: object.time,
-        });
+        };
       }); 
 
-      return { schedules: json };    
+      console.log( { schedules: allForms });
+      return { schedules: allForms };    
     })
     .then(function(object) {
       return fetch('http://localhost:3000/api/schedules', {
         method: 'POST',
         body: JSON.stringify(object),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
     })
-    .then(request => console.log(request))
+    .then(function(request) {
+      if (request.status === 201) {
+        alert('Schedules added.');
+      } else {
+        alert('Schedules cannot be added. Check inputs.');
+      }
+
+      return;
+    })
     .catch(err => console.log(err));
   });
 

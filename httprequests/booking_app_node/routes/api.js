@@ -14,7 +14,9 @@ function sleep(time) {
 
 function areSchedulesValid(schedules) {
   return schedules.length > 0 && schedules.every(function(schedule) {
-    return schedule.staff_id && schedule.date && schedule.time;
+    return (schedule.staff_id && schedule.date && schedule.time) &&
+           (/[0-9][0-9][-][0-3][0-9][-][0-9][0-9]/.test(schedule.date) && schedule.date.length === 8) &&
+           (/[0-2][0-9][:][0-5][0-9]/.test(schedule.time) && schedule.time.length === 5);
   });
 }
 
@@ -171,7 +173,6 @@ router.get('/schedules/:staff_id', function(req, res, next) {
 router.post('/staff_members', function(req, res, next) {
   const email = req.body['email'];
   const name = req.body['name'];
-  res.set('Access-Control-Allow-Origin', '*');
 
   if (!email || !name) {
     res.status(400).send('Staff can not be created. Check your inputs');
@@ -209,7 +210,6 @@ router.post('/staff_members', function(req, res, next) {
  */
 router.post('/schedules', function(req, res, next) {
   const schedules = req.body['schedules'];
-  res.set('Access-Control-Allow-Origin', '*');
   
   if (areSchedulesValid(schedules)) {
     schedules.forEach(function(schedule) {
@@ -226,6 +226,17 @@ router.post('/schedules', function(req, res, next) {
   }
 });
 
+router.patch('/schedules', function(req, res, next) {
+  const obj = req.body['object'];
+
+  if (obj) {
+    db.run(`UPDATE BOOKINGS SET student_email='${obj[0]["email"]}' WHERE id=${obj[0]['id']};`);
+    // db.run(`REPLACE INTO BOOKINGS (id, student_email) VALUES (${obj[0]['id']}, '${obj[0]["email"]}');`)
+    res.status(201).send('Schedule modified and booked.');
+  } else {
+    res.status(400).send('Schedule could not be modified.');
+  }
+});
 /**
  * @api {post} /bookings Books a staff member schedule
  * @apiGroup Student
