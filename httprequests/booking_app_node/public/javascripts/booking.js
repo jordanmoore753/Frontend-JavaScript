@@ -14,9 +14,6 @@ async function addStudentForm() {
     };
   });
 
-  // console.log(formattedSchedules);
-  // console.log(availableSchedules);
-
   createSelectElement(formattedSchedules);
   return;
 }
@@ -52,17 +49,21 @@ async function bookSchedule(email, select) {
   .then(function(response) {
     if (response.status === 204) {
       alert('Successfully created booking.');
+      addStudentForm();
       return;
     } else {
       return response.text();
     }
   })
   .then(function(resolved) {
-    alert(resolved);
-    let arr = resolved.split(' ');
-    let sequence = Number(arr[arr.length - 1]);
-    createStudentForm(sequence, email);
-    return;
+    if (typeof resolved === 'string') {
+      alert(resolved);
+      let arr = resolved.split(' ');
+      let sequence = Number(arr[arr.length - 1]);
+      createStudentForm(sequence, email);     
+    }
+
+    return; 
   })
   .catch(err => console.log(err));
 }
@@ -90,10 +91,12 @@ function createSelectElement(formattedSchedules) {
 }
 
 function createStudentForm(bookingSequence, email) {
+  let firstSubmit = document.getElementById('bookingSubmit');
   let form = document.createElement('form');
   let secondDiv = document.getElementById('content-two');
 
   form.id = 'studentForm';
+  firstSubmit.disabled = true;
 
   let emailInput = document.createElement('input');
   let bookingInput = document.createElement('input');
@@ -124,13 +127,36 @@ function createStudentForm(bookingSequence, email) {
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    console.log(Array.from(form.querySelectorAll('input')));
-    // access all values in form
-    // use values as POST body
-    // fetch post to api/students
-    // send as json
-    // destroy griffin
-    // values are guaranteed to be accurate
+    let firstSubmit = document.getElementById('bookingSubmit');
+    let select = document.querySelector('select').value;
+    let inputs = Array.from(form.querySelectorAll('input'));
+    let secondDiv = document.getElementById('content-two');
+    let data = {
+      booking_sequence: inputs[2].value,
+      email: inputs[0].value,
+      name: inputs[1].value,
+    };
+
+    fetch('http://localhost:3000/api/students', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(function(response) {
+      if (response.status === 201) {
+        alert('Student successfully created.');
+        return bookSchedule(data.email, select);
+      } else {
+        alert(response.text());
+        return;
+      }
+    })
+    .catch(err => console.log(err));
+
+    firstSubmit.disabled = false;
+    secondDiv.removeChild(form);
   });
 
   return;
