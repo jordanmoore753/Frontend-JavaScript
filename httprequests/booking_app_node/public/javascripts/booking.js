@@ -36,32 +36,35 @@ async function bookSchedule(email, select) {
     time: select.split('|')[2].trim(),
   };
 
-  return studentEmailExists(email)
-  .then(function(boolean) {
-    if (boolean) {
-      let scheduleID = getScheduleID(availableSchedules, optionValues);
-      let values = {
-        'object': [ { id: scheduleID, 
-          email: email
-        }],
-      };
+  let scheduleID = getScheduleID(availableSchedules, optionValues);
+  let values = {
+    student_email: email,
+    id: scheduleID,
+  };
 
-      console.log(email);
-      fetch('http://localhost:3000/api/schedules', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values)
-      })
-      .then(response => console.log(response.text()))
-      .catch(err => console.log(err));
-      // put
+  fetch('http://localhost:3000/api/bookings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(values)
+  })
+  .then(function(response) {
+    if (response.status === 204) {
+      alert('Successfully created booking.');
+      return;
     } else {
-      // create new form
+      return response.text();
     }
   })
-  .catch(err => console.error(err));
+  .then(function(resolved) {
+    alert(resolved);
+    let arr = resolved.split(' ');
+    let sequence = Number(arr[arr.length - 1]);
+    createStudentForm(sequence, email);
+    return;
+  })
+  .catch(err => console.log(err));
 }
 
 async function studentEmailExists(email) {
@@ -84,6 +87,53 @@ function createSelectElement(formattedSchedules) {
   });
 
   form.replaceChild(select, firstSelect);
+}
+
+function createStudentForm(bookingSequence, email) {
+  let form = document.createElement('form');
+  let secondDiv = document.getElementById('content-two');
+
+  form.id = 'studentForm';
+
+  let emailInput = document.createElement('input');
+  let bookingInput = document.createElement('input');
+  let nameInput = document.createElement('input');
+  let submitInput = document.createElement('input');
+
+  [emailInput, bookingInput].forEach((element) => element.disabled = true);
+
+  emailInput.type = 'text';
+  bookingInput.type = 'number';
+  submitInput.type = 'submit';
+
+  emailInput.value = email;
+  bookingInput.value = bookingSequence;
+  submitInput.value = 'Create Student And Book Schedule';
+
+  nameInput.type = 'text';
+  nameInput.maxLength = '30';
+  nameInput.required = true;
+
+  nameInput.id = 'nameInput';
+  emailInput.id = 'emailInput';
+  bookingInput.id = 'bookingInput';
+  submitInput.id = 'studentSubmit';
+  
+  [emailInput, nameInput, bookingInput, submitInput].forEach((element) => form.appendChild(element));
+  secondDiv.appendChild(form);
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    console.log(Array.from(form.querySelectorAll('input')));
+    // access all values in form
+    // use values as POST body
+    // fetch post to api/students
+    // send as json
+    // destroy griffin
+    // values are guaranteed to be accurate
+  });
+
+  return;
 }
 
 function getScheduleID(available, optionValues) {
