@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>val demo</title>
+  <style>
+  p {
+    color: red;
+    margin: 4px;
+  }
+  b {
+    color: blue;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+</head>
+<body>
+ 
+<p></p>
+ 
+<select id="single">
+<input type="text" value="some text">
+<p></p>
+<ul>
+  <li>Something</li>
+  <li>Yes</li>
+  <li>Okay</li>
+</ul>
+<script>
+$('input').keyup(function() {
+  let $value = $(this).val();
+  $('p').text($value);
+});
+
+$('li').text('No!');
+</script>
+ 
+</body>
+</html>
