@@ -77,3 +77,56 @@ $('a').each(function() {
   console.log($(this).text()); // each 'a' element 
 });
 ```
+### DOM Traversal with jQuery
+
+HTML element access is possible using jQuery to pass a CSS-like selector to the jQuery function.
+
+`find` can be used to traverse to an element's child elements.
+
+```js
+let $l = $('ul');   // get HTML element ul
+$l.find('li:even'); // returns jQuery collection of two li elements, 0 and 2 indexed
+$l.find('li');      // returns jQuery collection of all three li
+```
+To look outward from an element, (`find` looks inward) one can use `parent` to find an element's parent element.
+
+```js
+$l.parent(); // body, jQuery object
+```
+You can also select the parent elements which have a certain class or other selector.
+
+```js
+$l.parent('.highlight'); // only parent elements which have class
+$l.parent('#high');      // only parent elements with id 
+$l.parent('p');          // all children p elements of parent
+```
+`closest` is a method for finding the first matching element starting from a given jQuery object.
+
+```html
+<ul class="wont">
+  <ul>
+    <li></li>
+  </ul>
+</ul>
+```
+
+```js
+$l = $('li');
+$l.closest('ul').addClass('categories');
+// this will add class to the immediate parent of li, ul, since that's the first and closest ul to li
+```
+Keep in mind, `closest` will check the element against itself.
+
+```js
+$l.closest('li') === $l; // same element
+$('article li').filter(function(index) {
+  return index === 2;
+});
+$('li'.textContent === 'ac ante');
+$('li li').filter(":contains('ac ante')");
+$('td')[-1];
+$('body').filter(function() {
+  return $(this).className(":contains('block')");
+});
+$('body').find("[class*=block]");
+```

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Fluid Layout Gallery</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="gallery.css" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('li > img').on('click', function(e) {
+          e.preventDefault();
+          $('figure').stop();
+          $('figure').fadeOut(0);
+
+          $('img').each(function() {
+            $(this).removeClass('selected-img')
+          });
+
+          e.target.classList.add('selected-img');
+
+          $('figure > img').attr('src', e.target.src);
+          $('figure > figcaption').text(e.target.title)
+          $('figure').fadeIn(500);
+        });
+
+        $('.arrow-bkgd-left').on('click', function(e) {
+          let indexOfSelected;
+          let nextIndex;
+
+          $('li img').each(function(index) {
+            if ($(this).hasClass('selected-img')) {
+              indexOfSelected = index;
+            }
+          });
+
+          if (indexOfSelected === 0) {
+            nextIndex = 3;
+          } else {
+            nextIndex = indexOfSelected - 1;
+          }
+
+          $('li img').each(function(index) {
+            if (index === nextIndex) {
+              $(this).trigger('click');
+              return false;
+            }
+          });
+        });
+
+        $('.arrow-bkgd-right').on('click', function(e) {
+          let indexOfSelected;
+          let nextIndex;
+
+          $('li img').each(function(index) {
+            if ($(this).hasClass('selected-img')) {
+              indexOfSelected = index;
+            }
+          });
+
+          if (indexOfSelected === 3) {
+            nextIndex = 0;
+          } else {
+            nextIndex = indexOfSelected + 1;
+          }
+
+          $('li img').each(function(index) {
+            if (index === nextIndex) {
+              $(this).trigger('click');
+              return false;
+            }
+          });
+        });
+
+        $('li img').first().trigger('click');
+      });
+    </script> 
+  </head>
+  <body>
+    <main>
+      <h1>My Photo Gallery</h1>
+      <figure>
+        <div class="arrow-bkgd-left">
+          <div id="arrow-one"></div>
+        </div>
+        <img src="https://via.placeholder.com/1200x900" alt="" title="Microsoft Desktop" />
+        <div class="arrow-bkgd-right">
+          <div id="arrow-two"></div>
+        </div>
+        <figcaption>Example Photo</figcaption>
+      </figure>
+      <ul>
+        <li><img class="selected-img" src="https://cdn.windowsreport.com/wp-content/uploads/2019/12/Windows-10-1200x900.jpg" alt="" title="Microsoft Desktop" /></li>
+        <li><img src="https://www.clivesimpson.co.uk/wp-content/uploads/journalist-bg-1200x900.jpg" alt="" title="Looking Over the Earth" /></li>
+        <li><img src="https://localtvwhnt.files.wordpress.com/2019/12/s117732815.jpg?quality=85&strip=all&w=1200" alt="" title="Coral and Sand" /></li>
+        <li><img src="https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iVFu_DAXmKzk/v0/1200x900.jpg" alt="" title="Oil Rig at Night" /></li>
+      </ul>
+    </main>
+  </body>
+</html>

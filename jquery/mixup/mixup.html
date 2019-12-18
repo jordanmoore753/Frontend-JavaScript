@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="site.css" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(document).ready(function() {
+        // move nav bar
+
+        $('main').before($('body > header'));
+        $('body > header').prepend($('h1')[0]);
+
+        // figcaptions
+
+        let mop = $('figcaption')[1].textContent;
+        let stick = $('figcaption')[0].textContent;
+
+        $('figcaption')[0].textContent = mop;
+        $('figcaption')[1].textContent = stick;
+
+        // img placement
+
+        let stickImg = $('figure')[1].children[0];
+        let stickCaption = document.createElement('figcaption');
+        stickCaption.textContent = stick;
+        
+        $('<figure></figure>').insertAfter($('article'));
+        $('figure')[0].append(stickImg);
+        $('figure')[0].append(stickCaption);
+        $('figure').last().remove();
+
+        // move img to article
+
+        $('article').append($('figure'));
+      });
+    </script>  
+  </head>
+  <body>
+    <main>
+      <h1><a href="#">My Site!</a></h1>
+      <section id="content">
+        <article>
+          <header>
+            <h1>Welcome to my site!</h1>
+            <h2>I hope you stay a while.</h2>
+          </header>
+          <p>This is my personal slice of the Internet, where I post my ideas and projects that I've completed or am currently working on. All are patent pending.</p>
+        </article>
+        <figure>
+          <img src="images/baby_mop.jpg" alt="The baby mop" />
+          <figcaption>The chin stick &ndash; stay upright while sleeping!</figcaption>
+        </figure>
+        <figure>
+          <img src="images/chin_stick.jpg" alt="The chin stick" />
+          <figcaption>The baby mop &ndash; great for wet and dry mopping!</figcaption>
+        </figure>
+      </section>
+    </main>
+
+    <header>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <footer>
+      <p>&copy; 2014 me. All projects are patent pending</p>
+    </footer>
+  </body>
+</html>
