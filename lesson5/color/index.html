@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        background-color: #55868C;
+        font-family: monospace;
+        font-size: 1.3rem;
+      }
+
+      #content {
+        background-color: #CACAAA;
+        width: 75%;
+        height: auto;
+        margin: 0 auto;
+        margin-top: 20px;
+        box-shadow: 2px 3px black;
+        border-radius: 5px;
+        padding-bottom: 20px;
+      }
+
+      #canvas {
+        display: inline-block;
+        background: linear-gradient(#e66465, #9198e5);
+        width: 90%;
+        height: 600px;
+        margin: 50px 75px 20px;
+        box-shadow: 2px 3px 2px black;
+        border-radius: 5px;        
+      }
+
+      #links {
+        margin-left: 75px;
+        display: inline;
+      }
+
+      #links p {
+        display: inline;
+      }
+
+      #links a {
+        text-decoration: none;
+        color: black;
+      }
+
+      #shape-adder {
+        margin-top: 15px;
+        margin-left: 75px;
+      }
+
+      #radio-options p {
+        display: inline;
+      }
+
+      .star {
+        background-image: url('star.png');
+        width: 60px;
+        height: 60px;
+        position: relative;
+      }
+
+      .circle {
+        background-color: black;
+        border: 1px solid black;
+        border-radius: 50px;
+        width: 30px;
+        height: 30px;
+        position: relative;
+      }
+
+      .square {
+        background-color: black;
+        width: 30px;
+        height: 30px;  
+        position: relative;      
+      }
+
+      input {
+        display: inline-block;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <div id="canvas"></div>
+      <div id="links">
+        <a id="starter" href="#">Start</a>
+        <p>|</p>
+        <a id="stopper" href="#">Stop</a>     
+      </div>
+      <div id="shape-adder">
+        <h1>Add Shape</h1>
+        <form id="radio-options">
+          <h2>Type</h2>
+            <input type="radio" name="opt" value="star" checked>
+            <label for="star">Star</label>
+            <input type="radio" name="opt" value="circle">
+            <label for="circle">Circle</label>
+            <input type="radio" name="opt" value="square">
+            <label for="square">Square</label>          
+          <h2>Coordinates</h2>
+            <label for="startX">Starting X:</label>
+            <input type="number" name="startX" min="0" max="900" value="1" placeholder="x" required>
+            <label for="startingY">Starting Y:</label>
+            <input type="number" name="startY" min="0" max="540" value="1" placeholder="y" required>
+            <p>|</p>
+            <label for="endingX">Ending X:</label>
+            <input type="number" name="endX" min="0" value="1" max="900"placeholder="x" required>
+            <label for="endingY">Ending Y:</label>
+            <input type="number" name="endY" min="0" max="540" value="1" placeholder="y" required>
+            <br>
+            <br>
+            <input type="submit" name="yes" value="Submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

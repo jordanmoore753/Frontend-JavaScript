@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        background-color: #55868C;
+        font-family: monospace;
+        font-size: 1.2rem;
+      }
+
+      #content {
+        background-color: #CACAAA;
+        width: 75%;
+        height: 800px;
+        margin: 0 auto;
+        margin-top: 50px;
+        box-shadow: 2px 3px black;
+        border-radius: 5px;
+      }
+
+      #checkboxes, #games {
+        display: inline-block;
+      }
+
+      #checkboxes {
+        margin: 30px 30px;
+        vertical-align: top;
+      }
+
+      #checkboxes input {
+        margin: .4rem;
+      }
+
+      #games {
+        margin-top: 5px;
+      }
+
+      #games h1 {
+        margin-left: 40px;
+      }
+
+      li {
+        list-style-type: none;
+        border-bottom: 2px solid black; 
+        padding: 20px;
+        transition: background-color .2s ease;
+        border-radius: 10px;
+      }
+
+      li:hover {
+        background-color: white;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="logic.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <div id="checkboxes">
+        <div>
+          <input type="checkbox" name="3ds" value="Nintendo 3DS">
+          <label for="3ds">Nintendo 3DS</label>
+        </div>
+        <div>
+          <input type="checkbox" name="wii" value="Nintendo WiiU">
+          <label for="3ds">Nintendo WiiU</label>       
+        </div>
+        <div>
+          <input type="checkbox" name="ps4" value="PlayStation 4">
+          <label for="3ds">PlayStation 4</label>        
+        </div>
+        <div>
+          <input type="checkbox" name="xbox" value="Xbox One">
+          <label for="3ds">Xbox One</label>       
+        </div>       
+      </div>
+      <div id="games">
+        <h1>Games</h1>
+        <ul>
+          <li data-info="1">The Legend of Zelda for Nintendo 3DS</li>
+          <li data-info="2">Super Smash Bros. for Nintendo 3DS</li>
+          <li data-info="3">Super Smash Bros. for Nintendo WiiU</li>
+          <li data-info="4">LEGO Batman 3: Beyond Gotham for Nintendo WiiU</li>
+          <li data-info="5">LEGO Batman 3: Beyond Gotham for Xbox One</li>
+          <li data-info="6">LEGO Batman 3: Beyond Gotham for PlayStation 4</li>
+          <li data-info="7">Far Cry 4 for PlayStation 4</li>
+          <li data-info="8">Far Cry 4 for Xbox One</li>
+          <li data-info="9">Call of Duty: Advanced Warfare for PlayStation 4</li>
+          <li data-info="10">Call of Duty: Advanced Warfare for Xbox One</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

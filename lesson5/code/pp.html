@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        $('a').on('click', function(e) {
+          e.preventDefault();
+
+          let selectedData = $(this).data('block');
+
+          $('article').each(function() {
+            if ($(this).data('block') !== selectedData) {
+              $(this).fadeOut(0);
+            } else {
+              $(this).fadeIn(0);
+            }
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <ul>
+      <li><a href="#" data-block="gold">Gold Sponsors</a></li>
+      <li><a href="#" data-block="silver">Silver Sponsors</a></li>
+      <li><a href="#" data-block="bronze">Bronze Sponsors</a></li>
+    </ul>
+
+    <article data-block="gold">
+      <h1>Gold Sponsors</h1>
+    </article>
+
+    <article data-block="silver">
+      <h1>Silver Sponsors</h1>
+    </article>
+
+    <article data-block="bronze">
+      <h1>Bronze Sponsors</h1>
+    </article>
+  </body>
+</html>
+
+

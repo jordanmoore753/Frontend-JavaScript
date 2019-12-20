@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="comic.css" />
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        function animateBoxes(blinds) {
+          blinds.each(function(i) {
+            let $blind = blinds.eq(i);
+            $blind.delay(delay * i).animate({
+              top: '+=' + $blind.height(),
+              height: 0,
+            }, speed);
+          });
+        }
+
+        let $allBlinds = $('[id^=blind]');
+        let speed = 250;
+        let delay = 1000;
+
+        $('#restart').on('click', function(e) {
+          e.preventDefault();
+
+          $allBlinds.finish();
+          $allBlinds.removeAttr('style');
+          
+          animateBoxes($allBlinds);
+        });
+
+        animateBoxes($allBlinds);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="comic">
+      <div id="panel_1">
+        <div id="blind_1"></div>
+        <div id="blind_2"></div>
+      </div>
+
+      <div id="panel_2">
+        <div id="blind_3"></div>
+        <div id="blind_4"></div>
+      </div>
+
+      <div id="panel_3">
+        <div id="blind_5"></div>
+        <div id="blind_6"></div>
+      </div>
+
+      <div id="panel_4">
+        <div id="blind_7"></div>
+        <div id="blind_8"></div>
+        <div id="blind_9"></div>
+      </div>
+    </div>
+    <button id="restart">Restart</button>
+  </body>
+</html>
