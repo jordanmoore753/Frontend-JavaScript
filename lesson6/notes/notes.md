@@ -183,3 +183,14 @@ Ajax requests are triggered by JS code. The code sends a request to a URL. When 
 - Render `photo_information` template using the **first photo's** data, write it to `section > header` element.
 
 Use `/photos` endpoint with GET and return JSON data.
+
+2. Create the slide to next picture feature (forwards and backwards).
+
+- Get the `figure` which has `display` value of `block`. 
+- Check its `data-id` property and subtract `1` from it.
+- NEXT: Find the next sibling. If the `id` + 1 is `===` to `length` of `children` of `figure`'s parent, the sibling is `figure` with `data-id` of `1`. 
+- PREVIOUS: If `id` - `1` is `0`, the sibling to change to is `figure` with `data-id` of `children` of `figure` parent.
+- Otherwise, get the `next` sibling of `currentFigure`. 
+
+Render the photo details (pass `data-id` - 1 to `getPhotoInformation`).
+Render the photo comments (pass `data-id` with `json` file to right method).
