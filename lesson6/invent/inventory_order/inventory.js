@@ -1,9 +1,10 @@
 let inventory;
 
 (function() {
+  let lastId = 0;
+
   inventory = {
     collection: [],
-    lastId: 0,
 
     setDate: function() {
       let $date = $('#order_date');
@@ -13,43 +14,48 @@ let inventory;
     },
 
     cacheTemplate: function() {
-      let $i_tmpl = $('#inventory_item').remove();
-      this.template = $i_tmpl.html();
+      this.inventoryTemplate = Handlebars.compile($('#inventory_item').html());
+      this.inventoryTemplate.bind(this);
     },
 
     init: function() {
       this.setDate();
       this.cacheTemplate();
+      this.bindEvents();
     },
 
     addItem: function() {
-      let newItemHTML = this.template;
       let defaultObj = {
-        id: this.lastId,
+        id: lastId,
         name: undefined,
         stockNumber: undefined,
         quantity: 1,
       };
 
-      newItemHTML = newItemHTML.replace(/ID/g, this.lastId);
-      $('#inventory').append(newItemHTML);
+      $('#inventory').append(this.inventoryTemplate(defaultObj));
 
       this.collection.push(defaultObj);
-      this.lastId += 1;
+      lastId += 1;
     },
 
-    deleteItem: function(id, row) {
+    deleteItem: function(e) {
+      e.preventDefault();
+      let $row = $(e.target).parent().parent();
+      let id = Number($row.children()[0].children[0].name.split('_')[2]);
+
       let idString = `item_id_${id}`;
       let idToDelete = this.getItemIndex(id);
 
-      row.remove();
+      $row.remove();
       this.collection.splice(idToDelete, 1);
     },
 
-    updateItem: function(data) {
-      currentItem = this.getItem(data.id);
+    updateItem: function(e) {
+      let itemData = e.target;
+      itemData = getDataFromName(itemData);
 
-      currentItem[data.property] = data['value'];
+      let currentItem = this.getItem(itemData.id);
+      currentItem[itemData.property] = itemData['value'];
     },
 
     getItem: function(id) {
@@ -78,7 +84,13 @@ let inventory;
       }
 
       return index;      
-    }
+    },
+
+    bindEvents: function() {
+      $('#add_item').on('click', $.proxy(this.addItem, this));
+      $('#inventory').on('blur', 'input', $.proxy(this.updateItem, this));
+      $('#inventory').on('click', 'a.delete', $.proxy(this.deleteItem, this));
+    },
   };
 })();
 
@@ -99,16 +111,3 @@ function getDataFromName(input) {
 }
 
 $(inventory.init.bind(inventory));
-
-$(function() {
-  $('#inventory').on('blur', 'input', function(e) {
-    let itemData = getDataFromName(e.target);
-    inventory.updateItem(itemData);
-  });
-
-  $('#inventory').on('click', 'a', function(e) {
-    let $row = $(e.target).parent().parent();
-    let id = Number($row.children()[0].children[0].name.split('_')[2]);
-    inventory.deleteItem(id, $row);
-  });
-});
