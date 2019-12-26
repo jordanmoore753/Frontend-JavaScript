@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Languages</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      let languages = [
+      {
+        name: 'Ruby',
+        description: 'Ruby is a dynamic, object-oriented ' +
+        'programming language. It was designed in the mid' +
+        '-1990s by Yukihiro Matsumoto in Japan. According' +
+        ' to its creator, Ruby was influenced by Perl, Sm' +
+        'alltalk, Eiffel, Ada, and Lisp. Ruby uses classe' +
+        's for its inheritance model. All data within a c' +
+        'lass is private by default. This is useful and i' +
+        's an advantage over JavaScript.',
+        id: 0,
+      },
+
+      {
+        name: 'JavaScript',
+        description: 'JavaScript is a high-level, dynamic' +
+        ' programing language and is my personal favorite' +
+        '. It is one of the only languages which uses pro' +
+        'totypal-inheritance for objects. JS is one of th' +
+        'e most popular languages and is the leading lang' +
+        'for web development and use with the DOM. NodeJS' +
+        ' is the leading server-side framework.',
+        id: 1,
+      },
+
+      {
+        name: 'Python',
+        description: 'Python is an interpreted, high-leve' +
+        'l, general-purpose programming language. This la' +
+        'nguage was created by Guido van Rossum and empha' +
+        'sizes code readability with a huge amount of whi' +
+        'tespace use. Python is dynamically typed and gar' +
+        'bage collected. It also supports multiple paradi' +
+        'gms, procedural, and functional programming.',
+        id: 2,
+      },
+
+      ];
+
+      function loadSections() {
+        let initialSections = languages.map(function(object) {
+          return {
+            name: object.name,
+            id: object.id,
+            description: object.description.slice(0, 120),
+          };
+        });
+
+        let data = { languages: initialSections };
+        let sectionTemplater = Handlebars.compile($('#section_template').html());
+
+        $('#languages').prepend(sectionTemplater(data));
+      }
+
+      function findLanguage(id) {
+        return languages.filter((object) => object.id === id)[0];
+      }
+
+      $(function() {
+        loadSections();
+
+        $('#languages').on('click', 'button.more-info', function(e) {
+          e.preventDefault();
+          let $s = $(this).parent();
+          let id = Number($s.attr('data-id'));
+          let languageObject = findLanguage(id);
+
+          $s.find('p').text(languageObject.description);
+
+          $(this).removeClass('more-info');
+          $(this).text('Show less');
+          $(this).addClass('less-info');
+        });
+
+        $('#languages').on('click', 'button.less-info', function(e) {
+          e.preventDefault();
+          let $s = $(this).parent();
+
+          let newText = $s.find('p').text();
+          newText = newText.slice(0, 120) + '...';
+
+          $s.find('p').text(newText);
+
+          $(this).removeClass('less-info');
+          $(this).text('Show more');
+          $(this).addClass('more-info');
+        });
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: #2CA58D;
+        font-family: monospace;
+      }
+
+      #languages {
+        display: block;
+        margin: 0 auto;
+        background-color: #F9ECCC;
+        width: 35%;
+        padding: 20px 35px 35px;
+        margin-top: 150px;
+        box-shadow: 2px 2px black;
+        border-radius: 10px;
+      }
+
+      footer {
+        text-align: center;  
+        color: gray;  
+        margin-top: 10px;   
+      }
+
+      section {
+        margin: 40px 0;
+      }
+
+      button {
+        font-size: .7rem;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="languages">
+      <footer>Created by Jordan Moore</footer>
+    </main>
+
+    <script id="section_template" type="text/x-handlebars">
+      {{#each languages}}
+        <section data-id="{{id}}"">
+          <h1>{{name}}</h1>
+          <p>{{description}}...</p>
+          <button class="more-info">Show more</button>
+        </section>
+      {{/each}}
+    </script>
+  </body>
+</html>
