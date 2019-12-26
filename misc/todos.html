@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Languages</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      let TodoTracker;
+
+      (function() {
+        let lastID = 1;
+
+        TodoTracker = {
+          collection: [
+            { id: 1, title: 'Homework' },
+            { id: 2, title: 'Shopping' },
+            { id: 3, title: 'Calling Mom' },
+            { id: 4, title: 'Coffee with John' }
+          ],
+
+          $t: $('#todos'),
+
+          deleteTodo(id) {
+            let i = 0;
+            let that = this;
+
+            for (; i < that.collection.length; i += 1) {
+              if (that.collection[i].id === id) {
+                break;
+              }
+            }
+
+            this.collection.splice(id, 1);
+          },
+
+          addTodo(title) {
+
+          },
+
+          findTodo(title) {
+            return this.collection.filter((obj) => obj.title === title)[0];
+          },
+        }
+      })();
+
+      function loadTodos() {
+        let todoTemplater = Handlebars.compile($('#todo_template').html());
+        let data = { todos: TodoTracker.collection };
+
+        $('#todo_list').append(todoTemplater(data));
+      }
+
+      function createConfirmPrompt(title) {
+        let confirmTemplater = Handlebars.compile($('#confirm_template').html());
+        let data = { title: title };
+
+        $('#fullscreen_container').fadeIn(150);
+        $('#fullscreen_container').append(confirmTemplater(data));
+      }
+
+      function createFormPrompt() {
+        let formTemplater = Handlebars.compile($('#form_template').html());
+
+        $('#fullscreen_container').fadeIn(150);
+        $('#fullscreen_container').append(formTemplater());
+      }
+
+      $(function() {
+        loadTodos();
+
+        $('.delete-icon').on('click', function(e) {
+          e.preventDefault();
+
+          let id = Number($(this).parent().attr('data-id'));
+          let title = $(this).parent()[0].textContent;
+
+          createConfirmPrompt(title);
+
+          $('.yes').on('click', function(e) {
+            e.preventDefault();
+
+            TodoTracker.deleteTodo(id);
+
+            $('#todo_list').find(`li[data-id="${id}"]`).remove();
+            $('#fullscreen_container aside').fadeOut(100).remove();
+            $('#fullscreen_container').fadeOut(150);
+          });
+
+          $('.no').on('click', function(e) {
+            e.preventDefault();
+
+            $('#fullscreen_container aside').fadeOut(100).remove();
+            $('#fullscreen_container').fadeOut(150);
+          });
+        });
+
+        $('#adder').on('click', function(e) {
+          e.preventDefault();
+
+          createFormPrompt();
+
+          // render form properly
+          // add Todo to Todo Tracker
+          // add Todo to #todo_list
+          // fadeOut background
+          // get rid of form
+        });
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: #2CA58D;
+        font-family: monospace;
+      }
+
+      #todos {
+        display: block;
+        margin: 0 auto;
+        background-color: #F9ECCC;
+        width: 500px;
+        padding: 20px 45px 35px 10px;
+        margin-top: 150px;
+        box-shadow: 2px 2px black;
+        border-radius: 10px;        
+      }
+
+      #adder {
+        font-size: .8rem;
+        display: block;
+        margin: 0 auto;
+        margin-top: 40px;
+        background-color: white;
+        padding: 10px 20px;
+        color: black;
+        text-shadow: 1px 1px lightblue;
+        border-radius: 30px;
+        box-shadow: 1px 2px black;
+        border: none;
+      }
+
+      fieldset {
+        border: none;
+      }
+
+      #todo_list li {
+        list-style-type: none;
+        margin: 10px 0;
+        border-bottom: 2px solid black;
+        padding: 20px 0;
+      }
+
+      .delete-icon {
+        float: right;
+        width: 20px;
+      }
+
+      #fullscreen_container {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(90, 90, 90, 0.5);
+        z-index: 9999;
+      }
+
+      aside {
+        display: block;
+        width: 431px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 3px 3px black;
+        height: 100px;
+        margin-top: 400px;
+      }
+
+      aside button {
+        display: inline-block;
+        position: relative;
+        left: 35%;
+        box-sizing: border-box;
+        font-size: .8rem;
+        width: 60px;
+      }
+
+      aside p {
+        padding-top: 20px;
+        text-align: center;
+      }
+
+      .title {
+        color: green;
+      }
+
+      footer {
+        font-size: .7rem;
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      h1 {
+        text-align: center;
+        text-shadow: 1px 2px white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="fullscreen_container"></div>
+      <main id="todos">
+        <h1>Todo-List</h1>
+        <ul id="todo_list"></ul>
+        <button id="adder">Add Todo</button>
+      </main>
+      
+    <script id="todo_template" type="text/x-handlebars">
+      {{#each todos}}
+        <li data-id="{{id}}">{{title}}<img src="https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png" class="delete-icon"></li>
+      {{/each}}
+    </script>
+
+    <script id="todo_single" type="text/x-handlebars">
+      <li data-id="{{id}}">{{title}}<img src="https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png" class="delete-icon"></li>    
+    </script>
+    <script id="confirm_template" type="text/x-handlebars">
+      <aside>
+        <p>Delete '<span class="title">{{title}}</span>' from list?</p>
+        <button class="yes">Yes</button>
+        <button class="no">No</button>
+      </aside>
+    </script>
+    <script id="form_template" type="text/x-handlebars">
+      <section id="temp-form">
+        <form href="#">
+          <fieldset>
+            <label for="todo-title">Name</label>
+            <input type="text" name="todo-title" maxlength="30" minlength="5" required>
+            <input type="submit" name="submit" value="Add Todo">
+          </fieldset>
+        </form>
+      </section>
+    </script>
+  </body>
+</html>
