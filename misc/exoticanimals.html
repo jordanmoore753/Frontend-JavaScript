@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Exotic Animals</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        $('body').on('mouseover', 'figure', function(e) {
+          e.preventDefault();
+          let $f = $(this);
+          let timeOutID = window.setTimeout(function() {
+            $f.find('figcaption').fadeIn(500);
+          }, 2100);
+
+          $('body').on('mouseleave', 'figure', function(e) {
+            e.preventDefault();
+            let $f = $(this);
+
+            window.clearTimeout(timeOutID);
+            $f.find('figcaption').fadeOut(500);
+          });
+        });
+      })
+    </script>
+    <style>
+      body {
+        display: grid;
+        grid: auto-flow / 1fr 1fr 1fr 1fr;
+        grid-gap: 50px;
+        box-sizing: border-box;
+        background-color: #cbffcb;
+        font-size: 1.5rem;
+        font-family: monospace;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+        box-shadow: 2px 2px black;
+        border-radius: 2px;
+      }
+
+      figcaption {
+        display: none;
+        width: 100%;
+        height: 25px;
+        background-color: #9898ff;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 20px;
+        box-shadow: 2px 2px black;
+      }
+    </style>
+  </head>
+  <body>
+    <figure>    
+      <img src="https://www.humanesociety.org/sites/default/files/styles/400x400/public/2019/04/mountain-lion-433723.jpg?h=36177f36&itok=U_HDxJqN" name="mountain-lion" alt="mountain lion">
+      <figcaption>Mountain Lion</figcaption>
+    </figure>
+    <figure>
+      <img src="https://s7068.pcdn.co/wp-content/uploads/2018/10/African-elephant-by-Alex-Proimos-400x400.jpg" name="african-elephant" alt="african elephant">     
+      <figcaption>African Elephant</figcaption>
+    </figure>
+    <figure>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7ekDUgZw0hPK76cMGqEVZ_N0wY16Y8XC8n7O7bVRvJU7mdUGC" name="blue-parrot" alt="Blue Parrot">   
+      <figcaption>Blue Parrot</figcaption>   
+    </figure>
+    <figure>
+      <img src="https://www.animalssale.com/uploads/400x400/5cb6c92ef0116.jpg" name="fennec-fox" alt="Fennec Fox">  
+      <figcaption>Fennec Fox</figcaption>    
+    </figure>
+  </body>
+</html>

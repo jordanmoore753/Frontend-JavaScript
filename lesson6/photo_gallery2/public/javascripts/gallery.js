@@ -71,6 +71,7 @@ $(function() {
 
       $currentPhoto.fadeOut(300);
       $nextPhoto.fadeIn(300);
+      $("input[name='photo_id']").val(nextID);
 
       await getPhotoInformation(this.collection[collectionIndex]);
       await getPhotoComments(this.collection[collectionIndex]['id']);
@@ -94,9 +95,32 @@ $(function() {
 
       $currentPhoto.fadeOut(300);
       $nextPhoto.fadeIn(300);
+      $("input[name='photo_id']").val(nextID);
 
       await getPhotoInformation(this.collection[collectionIndex]);
       await getPhotoComments(this.collection[collectionIndex]['id']);
+    },
+
+    likePhoto: async function(id) {
+      let response = await $.ajax('http://localhost:3000/photos/like', {
+        method: 'post',
+        data: `photo_id=${id}`,
+        timeout: 5000,
+        success: function(json) {
+          $('a.button.like')[0].textContent = `♡ ${json.total} Likes`;
+        },
+      });
+    },
+
+    favoritePhoto: async function(id) {
+      let response = await $.ajax('http://localhost:3000/photos/favorite', {
+        method: 'post',
+        data: `photo_id=${id}`,
+        timeout: 5000,
+        success: function(json) {
+          $('a.button.favorite')[0].textContent = `☆ ${json.total} Favorites`;
+        },
+      });
     },
 
     bind: function() {
@@ -107,4 +131,32 @@ $(function() {
 
   startPage();
   slideShow.init();
+
+  $('section > header').on('click', '.actions a', function(e) {
+    e.preventDefault();
+
+    let photoIndex = slideShow.$show.find('figure:visible').index() + 1;
+    let $typeOfEvent = $(e.target).attr('data-property');
+    let $id = Number($(e.target).attr('data-id'));
+    $typeOfEvent = $typeOfEvent.slice(0, $typeOfEvent.length - 1);
+
+    $typeOfEvent === 'like' ? slideShow.likePhoto($id) : slideShow.favoritePhoto($id);
+  });
+
+  $('form').on('submit', function(e) {
+    e.preventDefault();
+
+    let commentTemplate = Handlebars.compile($('#photo_comment').html());
+    let $f = $(this);
+
+    $.ajax('http://localhost:3000/comments/new', { 
+      method: 'post',
+      data: $(this).serialize(),
+      timeout: 5000,
+      success: function(json) {
+        $('#comment_list').append(commentTemplate(json));
+        $f[0].reset();
+      },
+    });
+  });
 })
