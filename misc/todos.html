@@ -11,7 +11,7 @@
       let TodoTracker;
 
       (function() {
-        let lastID = 1;
+        let nextID = 5;
 
         TodoTracker = {
           collection: [
@@ -37,7 +37,21 @@
           },
 
           addTodo(title) {
+            let that = this;
 
+            for (let i = 0; i < this.collection.length; i += 1) {
+              if (that.collection[i].title === title) {
+                alert('Cannot add todo; title already exists.')
+                return false;
+              }
+            }
+
+            this.collection.push({
+              id: nextID,
+              title: title,
+            });
+
+            nextID += 1;
           },
 
           findTodo(title) {
@@ -71,7 +85,7 @@
       $(function() {
         loadTodos();
 
-        $('.delete-icon').on('click', function(e) {
+        $('#todo_list').on('click', '.delete-icon', function(e) {
           e.preventDefault();
 
           let id = Number($(this).parent().attr('data-id'));
@@ -102,11 +116,35 @@
 
           createFormPrompt();
 
-          // render form properly
-          // add Todo to Todo Tracker
-          // add Todo to #todo_list
-          // fadeOut background
-          // get rid of form
+          let $f = $('#fullscreen_container').find('form');
+          let $button = $('#fullscreen_container').find('form button');
+
+          $button.on('click', function(e) {
+            e.preventDefault();
+
+            $('#fullscreen_container section').fadeOut(100).remove();
+            $('#fullscreen_container').fadeOut(150);
+          });
+
+          $f.on('submit', function(e) {
+            e.preventDefault();
+
+            let listTemplater = Handlebars.compile($('#todo_single').html());
+            let title = $(this).find('input[name*="todo-title"').val();
+            TodoTracker.addTodo(title);
+
+            let newTodo = TodoTracker.collection[TodoTracker.collection.length - 1];
+
+            $('#todo_list').append(listTemplater({
+              id: newTodo.id,
+              title: newTodo.title,
+            }));
+
+            $('#fullscreen_container section').fadeOut(100).remove();
+            $('#fullscreen_container').fadeOut(150);
+          });
+
+          // style form properly
         });
       });
     </script>
@@ -180,6 +218,36 @@
         margin-top: 400px;
       }
 
+      #temp-form {
+        display: block;
+        width: 431px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 3px 3px black;
+        height: 150px;
+        margin-top: 400px;
+      }
+
+      #temp-form input[type=text] {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 20px;
+        margin-top: 30px;
+        height: 30px;
+        font-size: .9rem;
+      }
+
+      #temp-form input[type=submit], #temp-form button {
+        display: inline-block;
+        width: 80px;
+        font-size: .8rem;
+      }
+
+      #temp-form input[type=submit] {
+        margin-left: 120px;
+      }
+
       aside button {
         display: inline-block;
         position: relative;
@@ -238,9 +306,10 @@
       <section id="temp-form">
         <form href="#">
           <fieldset>
-            <label for="todo-title">Name</label>
+            <label for="todo-title"></label>
             <input type="text" name="todo-title" maxlength="30" minlength="5" required>
             <input type="submit" name="submit" value="Add Todo">
+            <button class="cancel">Cancel</button>
           </fieldset>
         </form>
       </section>
