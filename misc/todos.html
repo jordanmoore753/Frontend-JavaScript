@@ -8,61 +8,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
-      let TodoTracker;
-
-      (function() {
-        let nextID = 5;
-
-        TodoTracker = {
-          collection: [
-            { id: 1, title: 'Homework' },
-            { id: 2, title: 'Shopping' },
-            { id: 3, title: 'Calling Mom' },
-            { id: 4, title: 'Coffee with John' }
-          ],
-
-          $t: $('#todos'),
-
-          deleteTodo(id) {
-            let i = 0;
-            let that = this;
-
-            for (; i < that.collection.length; i += 1) {
-              if (that.collection[i].id === id) {
-                break;
-              }
-            }
-
-            this.collection.splice(id, 1);
-          },
-
-          addTodo(title) {
-            let that = this;
-
-            for (let i = 0; i < this.collection.length; i += 1) {
-              if (that.collection[i].title === title) {
-                alert('Cannot add todo; title already exists.')
-                return false;
-              }
-            }
-
-            this.collection.push({
-              id: nextID,
-              title: title,
-            });
-
-            nextID += 1;
-          },
-
-          findTodo(title) {
-            return this.collection.filter((obj) => obj.title === title)[0];
-          },
-        }
-      })();
-
-      function loadTodos() {
+      function loadTodos(object) {
         let todoTemplater = Handlebars.compile($('#todo_template').html());
-        let data = { todos: TodoTracker.collection };
+        let data = { todos: object.collection };
 
         $('#todo_list').append(todoTemplater(data));
       }
@@ -82,11 +30,85 @@
         $('#fullscreen_container').append(formTemplater());
       }
 
+      function fadeOutContainer(element) {
+        $('#fullscreen_container').find(`${element}`).remove();
+        $('#fullscreen_container').fadeOut(150);
+      }
+
+      function fadeInContainer(element) {
+        $(`#fullscreen_container ${element}`).fadeIn(100).remove();
+        $('#fullscreen_container').fadeIn(150);
+      }
+
       $(function() {
-        loadTodos();
+        let TodoTracker;
+
+        (function() {
+          let nextID = 5;
+
+          TodoTracker = {
+            collection: [
+              { id: 1, title: 'Homework' },
+              { id: 2, title: 'Shopping' },
+              { id: 3, title: 'Calling Mom' },
+              { id: 4, title: 'Coffee with John' }
+            ],
+
+            $t: $('#todos'),
+
+            deleteTodo(id) {
+              let i = 0;
+              let that = this;
+              let newCollection = [];
+
+              for (; i < that.collection.length; i += 1) {
+                if (that.collection[i].id !== id) {
+                  newCollection.push(that.collection[i]);
+                }
+              }
+
+              this.collection = newCollection;
+            },
+
+            addTodo(title) {
+              let that = this;
+
+              for (let i = 0; i < this.collection.length; i += 1) {
+                if (that.collection[i].title === title) {
+                  alert('Cannot add todo; title already exists.')
+                  return false;
+                }
+              }
+
+              this.collection.push({
+                id: nextID,
+                title: title,
+              });
+
+              let listTemplater = Handlebars.compile($('#todo_single').html());
+              let newTodo = TodoTracker.collection[TodoTracker.collection.length - 1];
+
+              $('#todo_list').append(listTemplater({
+                id: newTodo.id,
+                title: newTodo.title,
+              }));
+
+              nextID += 1;
+            },
+
+            findTodo(title) {
+              return this.collection.filter((obj) => obj.title === title)[0];
+            },
+          }
+        })();
+
+        loadTodos(TodoTracker);
 
         $('#todo_list').on('click', '.delete-icon', function(e) {
           e.preventDefault();
+          e.stopPropagation();
+
+          $('#fullscreen_container aside').remove();
 
           let id = Number($(this).parent().attr('data-id'));
           let title = $(this).parent()[0].textContent;
@@ -98,16 +120,14 @@
 
             TodoTracker.deleteTodo(id);
 
+            fadeOutContainer('aside');
             $('#todo_list').find(`li[data-id="${id}"]`).remove();
-            $('#fullscreen_container aside').fadeOut(100).remove();
-            $('#fullscreen_container').fadeOut(150);
           });
 
           $('.no').on('click', function(e) {
             e.preventDefault();
 
-            $('#fullscreen_container aside').fadeOut(100).remove();
-            $('#fullscreen_container').fadeOut(150);
+            fadeOutContainer('aside');
           });
         });
 
@@ -122,8 +142,7 @@
           $button.on('click', function(e) {
             e.preventDefault();
 
-            $('#fullscreen_container section').fadeOut(100).remove();
-            $('#fullscreen_container').fadeOut(150);
+            fadeInContainer('section');
           });
 
           $f.on('submit', function(e) {
@@ -133,18 +152,34 @@
             let title = $(this).find('input[name*="todo-title"').val();
             TodoTracker.addTodo(title);
 
-            let newTodo = TodoTracker.collection[TodoTracker.collection.length - 1];
+            fadeOutContainer('section');
+          });
+        });
 
-            $('#todo_list').append(listTemplater({
-              id: newTodo.id,
-              title: newTodo.title,
-            }));
+        $('#todo_list').on('contextmenu', 'li', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
 
-            $('#fullscreen_container section').fadeOut(100).remove();
-            $('#fullscreen_container').fadeOut(150);
+          if ($('#context').length >= 1) {
+            $('#context').fadeOut(150);
+          }
+
+          $li = $(this);
+          $title = $li[0].textContent;
+
+          $('#context').css('left', e.pageX);
+          $('#context').css('top', e.pageY);
+          $('#context').fadeIn(150);
+
+          $('#context').find('li.delete').on('click', function(e) {
+            $li.find('img').trigger('click');
           });
 
-          // style form properly
+          $('body').on('click', function(e) {
+            if ($('#context').length >= 1) {
+              $('#context').fadeOut(150);
+            }
+          });
         });
       });
     </script>
@@ -153,6 +188,19 @@
         font-size: 1.2rem;
         background-color: #2CA58D;
         font-family: monospace;
+      }
+
+      #context {
+        display: none;
+        position: absolute;
+      }
+
+      #c-menu {
+        display: block;
+        z-index: 3;
+        background-color: #4ed0b6;
+        margin: 0;
+        padding: 0;
       }
 
       #todos {
@@ -189,6 +237,7 @@
         margin: 10px 0;
         border-bottom: 2px solid black;
         padding: 20px 0;
+        cursor: pointer;
       }
 
       .delete-icon {
@@ -216,6 +265,23 @@
         box-shadow: 3px 3px black;
         height: 100px;
         margin-top: 400px;
+      }
+
+      .i-list {
+        padding: 15px;
+        border-bottom: 1px solid gray;
+        list-style-type: none;
+        transition: background-color .2s;
+        border-radius: 2px;
+        box-shadow: 1px 1px black;
+      }
+
+      .i-list:hover {
+        background-color: white;
+      }
+
+      .delete {
+
       }
 
       #temp-form {
@@ -285,6 +351,13 @@
         <ul id="todo_list"></ul>
         <button id="adder">Add Todo</button>
       </main>
+      <section id="context">
+        <ul id="c-menu">
+          <li class="i-list">Show Details</li>
+          <li class="i-list">Edit Todo</li>
+          <li class="delete i-list">Delete Todo</li>
+        </ul>        
+      </section>
       
     <script id="todo_template" type="text/x-handlebars">
       {{#each todos}}
@@ -312,6 +385,11 @@
             <button class="cancel">Cancel</button>
           </fieldset>
         </form>
+      </section>
+    </script>
+    <script id="context_template" type="text/x-handlebars">
+      <section id="context">
+
       </section>
     </script>
   </body>
