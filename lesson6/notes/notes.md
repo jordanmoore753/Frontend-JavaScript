@@ -199,3 +199,22 @@ Render the photo comments (pass `data-id` with `json` file to right method).
 
 - Get `id` of visible figure when clicked like or favorite and assign it to `photo_id`.
 - Send the request to `photos/like`, as `POST`, and with data (body) of `photo_id`. Return a `application/json` object.
+
+## Car Filter
+
+Application has a grid of cars that filters them by:
+
+1. make
+2. model
+3. price
+4. year of manufacture
+
+A `car` object has the following information:
+
+1. picture
+2. make
+3. model
+4. price
+5. year manufactured
+
+The 4 filter options should be in `<select>` tags. Once selections are made, the cars matching the filter options should be displayed and the others should be hidden.

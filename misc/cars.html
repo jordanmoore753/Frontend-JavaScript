@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Cars</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      let cars = [
+        { make: 'Honda', image: 'images/honda-accord-2005.jpg', model: 'Accord', year: 2005, price: 7000 },
+        { make: 'Honda', image: 'images/honda-accord-2008.jpg', model: 'Accord', year: 2008, price: 11000 },
+        { make: 'Toyota', image: 'images/toyota-camry-2009.jpg', model: 'Camry', year: 2009, price: 12500 },
+        { make: 'Toyota', image: 'images/toyota-corrolla-2016.jpg', model: 'Corolla', year: 2016, price: 15000 },
+        { make: 'Suzuki', image: 'images/suzuki-swift-2014.jpg', model: 'Swift', year: 2014, price: 9000 },
+        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 25000 },
+        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
+      ];
+
+      $(function() {
+        let carManager;
+
+        function generateSelectOptions() {
+          let selectTemplater = Handlebars.compile($('#select_template').html());
+
+          carManager.attributes.forEach(function(attr) {
+            let options = carManager.getAllData(attr);
+            let data = { 
+              type: attr,
+              options: options,
+            };
+
+            $('#filter_form fieldset').prepend(selectTemplater(data));
+          });
+        }
+
+        function getSelectedOption(attr) {
+          return $('#filter_form fieldset').find(`select[name="${attr}"`).find('option:selected').text();
+        }
+
+        (function() {
+          carManager = {
+            collection: cars,
+            attributes: ['price', 'year', 'model', 'make'],
+
+            getAllData: function(attr) {
+              let results = [];
+
+              this.collection.forEach(function(obj) {
+                if (!results.some((object) => object.option === obj[attr])) {
+                  results.push({option: obj[attr]});
+                }
+              }, this);
+
+              return results;
+            },
+
+            getMatchingCars: function(make, model, year, price) {
+              let results = [];
+
+              this.collection.forEach(function(car) {
+                if ((car.make === make || make === 'Any') && 
+                    (car.model === model || model === 'Any') &&
+                    (car.year === year || year === 'Any') && 
+                    (car.price === price || price === 'Any')) {
+                  results.push(car);
+                }
+              }, this);
+
+              return results;
+            },
+
+            filter: function(e) {
+              e.preventDefault();
+
+              let make = getSelectedOption('make');
+              let model = getSelectedOption('model');
+              let year = getSelectedOption('year');
+              let price = getSelectedOption('price');
+
+              if (year !== 'Any') {
+                year = Number(year);
+              }
+
+              if (price !== 'Any') {
+                price = Number(price);
+              }
+
+              let matches = this.getMatchingCars(make, model, year, price);
+              let data = { cars: matches };
+              let carTemplater = Handlebars.compile($('#car_template').html());
+
+              $('#cars aside').remove();
+              $('#cars').append(carTemplater(data));
+              return;
+            },
+
+            init: function() {
+              this.bindEvents();
+            },
+
+            bindEvents: function() {
+              $('#filter_form').on('submit', $.proxy(this.filter, this));
+            },
+          };
+        })();
+
+        carManager.init();
+        generateSelectOptions();
+        $('#filter_form').trigger('submit');
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: white;
+        font-family: monospace;
+      }
+
+      header {
+        background-color: #2CA58D;
+        padding: 20px;
+      }
+
+      fieldset {
+        border: none;
+      }
+
+      #cars {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr; 
+        align-items: end;
+        grid-gap: 20px;
+
+      }
+
+      .car-pic {
+        width: 220px;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Buy Used Cars</h1>
+      <section id="selections">
+        <form id="filter_form">
+          <fieldset>
+            <input type="submit" value="Filter">
+          </fieldset>
+        </form>
+      </section>
+    </header>
+    <main id="cars"></main>
+
+    <script id="car_template" type="text/x-handlebars">
+      {{#each cars}}
+        <aside>
+          <img class="car-pic" src="{{image}}">
+          <p><strong>{{make}} {{model}}</strong></p>
+          <p>Year: {{year}}</p>
+          <p>Price: ${{price}}</p>
+          <button class="buy">Buy</button>
+        </aside>
+      {{/each}}
+    </script>
+    <script id="select_template" type="text/x-handlebars">
+      <label for="{{type}}">{{type}}</label>
+      <select name="{{type}}">
+        <option>Any</option>
+        {{#each options}}
+          <option>{{option}}</option>
+        {{/each}}
+      </select>
+    </script>
+  </body>
+</html>
+
+
+<!-- https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png -->
