@@ -71,6 +71,18 @@
               return results;
             },
 
+            getMatchingModels: function(data) {
+              let results = [{ model: 'Any'}];
+
+              this.collection.forEach(function(car) {
+                if (car.make === data && !results.some((obj) => obj.model === car.model)) {
+                  results.push({ model: car.model });
+                }
+              });
+
+              return results;
+            },
+
             filter: function(e) {
               e.preventDefault();
 
@@ -96,18 +108,32 @@
               return;
             },
 
+            updateModels: function(e) {
+              e.preventDefault();
+
+              let data = $('select[name="make"] option:selected').text();
+              let models = { options: this.getMatchingModels(data) };
+              let optionTemplater = Handlebars.compile($('#option_template').html());
+              let $s = $('select[name="model"]');
+
+              $s.find('option').remove();
+              $s.append(optionTemplater(models));
+            },
+
             init: function() {
               this.bindEvents();
             },
 
             bindEvents: function() {
               $('#filter_form').on('submit', $.proxy(this.filter, this));
+              $('#filter_form select[name="make"]').on('blur', $.proxy(this.updateModels, this));
             },
           };
         })();
 
-        carManager.init();
+
         generateSelectOptions();
+        carManager.init();
         $('#filter_form').trigger('submit');
       });
     </script>
@@ -133,7 +159,6 @@
         grid-template-columns: 1fr 1fr 1fr 1fr; 
         align-items: end;
         grid-gap: 20px;
-
       }
 
       .car-pic {
@@ -174,6 +199,11 @@
           <option>{{option}}</option>
         {{/each}}
       </select>
+    </script>
+    <script id="option_template" type="text/x-handlebars">
+      {{#each options}}
+        <option>{{model}}</option>
+      {{/each}}
     </script>
   </body>
 </html>
