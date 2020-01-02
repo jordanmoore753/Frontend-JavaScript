@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Stop</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        let stopwatch = {
+          timeoutID: undefined,
+
+          init: function() {
+            this.bindEvents();
+            $('.reset').trigger('click');
+          },
+
+          bindEvents: function() {
+            $('.reset').on('click', $.proxy(this.reset, this));
+          },
+
+          startCounting: function(e) {
+            e.preventDefault();
+            let that = this;
+            this.bindStop();
+
+            this.timeoutID = setInterval(function() {
+              that.incrementCentiseconds();
+            }, 10);
+
+            return;
+          },
+
+          reset: function(e) {
+            e.preventDefault();
+
+            this.centiSeconds = '00';
+            this.seconds = '00';
+            this.minutes = '00';
+            this.hours = '00';
+
+            if (this.timeoutID) {
+              clearInterval(this.timeoutID);
+            }
+
+            this.timeoutID = null;
+            this.bindStart();
+
+            $('.centiseconds').text(this.centiSeconds);
+            $('.seconds').text(this.seconds);
+            $('.minutes').text(this.minutes);
+            $('.hours').text(this.hours);
+          },
+
+          stopCounting: function(e) {
+            e.preventDefault();
+
+            clearInterval(this.timeoutID);
+            this.timeoutID = null;
+            this.bindStart();
+            return;
+          },
+
+          incrementCentiseconds: function() {
+            let num = Number(this.centiSeconds);
+
+            num += 1;
+
+            if (num >= 100) {
+              this.incrementSeconds();
+              num = '00';
+            } else if (num < 10) {
+              num = '0' + String(num);
+            } else {
+              num = String(num);
+            }
+
+            this.centiSeconds = num;
+            $('.centiseconds').text(num);
+
+            return;
+          },
+
+          incrementSeconds: function() {
+            let num = Number(this.seconds);
+
+            num += 1;
+
+            if (num >= 60) {
+              this.incrementMinutes();
+              num = '00';
+            } else if (num < 10) {
+              num = '0' + String(num);
+            } else {
+              num = String(num);
+            }
+
+            this.seconds = num;
+            $('.seconds').text(num);
+
+            return;           
+          },
+
+          incrementMinutes: function() {
+            let num = Number(this.minutes);
+
+            num += 1;
+
+            if (num >= 60) {
+              this.incrementHours();
+              num = '00';
+            } else if (num < 10) {
+              num = '0' + String(num);
+            } else {
+              num = String(num);
+            }
+
+            this.minutes = num;
+            $('.minutes').text(num);
+
+            return;
+          },
+
+          incrementHours: function() {
+            let num = Number(this.hours);
+
+            num += 1;
+
+            if (num >= 99) {
+              this.reset();
+              return;
+            } else if (num < 10) {
+              num = '0' + String(num);
+            } else {
+              num = String(num);
+            }
+
+            this.hours = num;
+            $('.hours').text(num);
+
+            return;            
+          },
+
+          bindStart: function() {
+            let $btn = $('button').first();
+            
+            $btn.unbind('click');
+            $btn.removeClass('stop');
+            $btn.addClass('start');
+            $btn.text('Start');
+            $btn.on('click', $.proxy(this.startCounting, this));
+
+            return;
+          },
+
+          bindStop: function() {
+            let $btn = $('button').first();
+            
+            $btn.unbind('click');
+            $btn.removeClass('start');
+            $btn.addClass('stop');
+            $btn.text('Stop');
+            $btn.on('click', $.proxy(this.stopCounting, this));
+
+            return;
+          },
+        };
+
+        stopwatch.init();
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: #2CA58D;
+        font-family: monospace;
+      }
+
+      p {
+        text-align: center;
+        font-size: 1.5rem;
+      }
+
+      #buttons {
+        display: block;
+        margin: 0 auto;
+        width: 300px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      button {
+        display: inline-block;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <main id="watch">
+      <p><span class="hours"></span>:<span class="minutes"></span>:<span class="seconds"></span>:<span class="centiseconds"></span>
+      </p> 
+
+      <div id="buttons">
+        <button class="start">Start</button>
+        <button class="reset">Reset</button>        
+      </div>
+      <footer>Created by Jordan Moore</footer>
+    </main>
+
+    <script id="todo_template" type="text/x-handlebars">
+      {{#each todos}}
+
+      {{/each}}
+    </script>
+  </body>
+</html>
+
+
+<!-- https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png -->

@@ -218,3 +218,29 @@ A `car` object has the following information:
 5. year manufactured
 
 The 4 filter options should be in `<select>` tags. Once selections are made, the cars matching the filter options should be displayed and the others should be hidden.
+
+## Stopwatch 
+
+The stopwatch should have 4 two-digit counters:
+
+1. hours (00-99)
+2. minutes (00-59)
+3. seconds (00-59)
+4. centiseconds (00-99)
+
+All counters need a leading zero when the time value is less than 10.
+
+There should be a **start**, **stop**, and **reset** button.
+
+When the centiseconds counter reaches 100, it resets to `00` and the seconds counter increments by `1`. 
+
+When the seconds counter reaches `60`, it resets to `00` and the minutes counter increments by `1`.
+
+When the minutes counter reaches `60`, it resets to `00` and the hours counter increments by `1`.
+
+If `hours` reaches `99`, the timer stops.
+
+1. Have a `stopwatch` object which tracks `seconds`, `centiseconds`, `minutes`, `hours`.
+2. When incrementing `centiseconds` with `setTimeout`, if `centiseconds` reaches 60, invoke function which increments `seconds`. There is a similar function which can be invoked from `seconds`, which updates `minutes` and resets `seconds` to `00`, and also one in `minutes` which resets to `00` for `minutes` and increments `hours` by `1`.
+3. Represent the times as `span` tags in a `p` tag to start with.
+4. When updating a time, update by `class`, `textContent`, and do it asynchronously. 
