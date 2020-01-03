@@ -244,3 +244,17 @@ If `hours` reaches `99`, the timer stops.
 2. When incrementing `centiseconds` with `setTimeout`, if `centiseconds` reaches 60, invoke function which increments `seconds`. There is a similar function which can be invoked from `seconds`, which updates `minutes` and resets `seconds` to `00`, and also one in `minutes` which resets to `00` for `minutes` and increments `hours` by `1`.
 3. Represent the times as `span` tags in a `p` tag to start with.
 4. When updating a time, update by `class`, `textContent`, and do it asynchronously. 
+
+## Calculator
+
+The calculator needs the following options:
+
+divide, multiply, subtract, plus, modulo.
+
+The calculator can be reset with:
+
+`CE`: resets the top window and number input
+`C`: only resets the number input (number can be input and uses the previous number input and operation to calculate)
+`NEG`: converts current number input to negative (doesn't work with zero)
+
+`.` is used for decimals

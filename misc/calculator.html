@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CalcLord</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        let calculator = {
+          init: function() {
+            this.bindEvents();
+            this.ce();
+          },
+
+          bindEvents: function() {
+
+          },
+
+          add: function() {
+
+          },
+
+          subtract: function() {
+
+          },
+
+          multiply: function() {
+
+          },
+
+          divide: function() {
+
+          },
+
+          modulo: function() {
+
+          },
+
+          ce: function() {
+            this.operation = undefined;
+          },
+
+          c: function() {
+
+          },
+
+          negative: function() {
+
+          },
+
+          decimal: function() {
+
+          },
+
+          equals: function() {
+
+          },
+        };
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: #2CA58D;
+        font-family: monospace;
+      }
+
+      #calculator {
+        width: 275px;
+        height: auto;
+        background-color: #ffffed;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        padding: 15px;
+        box-sizing: border-box;
+        margin-top: 200px;
+        box-shadow: 1px 2px black;
+        border-radius: 10px;
+      }
+
+      #buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 50px);
+        grid-gap: 8px;
+        justify-content: center;
+      }
+
+      #buttons button {
+        font-size: .8rem;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+        box-shadow: 1px 1px purple;
+        border-radius: 5px;
+        transition: background-color .4s;
+        background-color: #ededed;
+      }
+
+      #buttons button:hover {
+        background-color: #ffd4ff;
+      }
+
+      #operation_window, #current_num {
+        height: 30px;
+        margin-bottom: 10px;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 5px;
+        cursor: not-allowed;
+      }
+
+      footer {
+        margin-top: 15px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="calculator"> 
+      <section id="operation_window"></section>
+      <section id="current_num"></section>
+      <section id="buttons">
+        <button class="ce">CE</button>
+        <button class="c">C</button>
+        <button class="neg">NEG</button>
+        <button class="divide">/</button>
+        <button class="seven">7</button>
+        <button class="eight">8</button>
+        <button class="nine">9</button>
+        <button class="multiply">x</button>
+        <button class="four">4</button>
+        <button class="five">5</button>
+        <button class="six">6</button>
+        <button class="subtract">-</button>
+        <button class="one">1</button>
+        <button class="two">2</button>
+        <button class="three">3</button>
+        <button class="add">+</button>
+        <button class="zero">0</button>
+        <button class="decimal">.</button>
+        <button class="modulo">%</button>
+        <button class="equals">=</button>
+      </section>
+    </main>
+    <footer>Created by Jordan Moore</footer>
+    <script id="todo_template" type="text/x-handlebars">
+      {{#each todos}}
+
+      {{/each}}
+    </script>
+  </body>
+</html>
+
+
+<!-- https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png -->
