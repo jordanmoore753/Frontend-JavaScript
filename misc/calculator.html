@@ -20,6 +20,9 @@
             $('.num').on('click', $.proxy(this.concatDigit, this));
             $('.neg').on('click', $.proxy(this.negatize, this));
             $('.operation').on('click', $.proxy(this.concatOperation, this));
+            $('.ce').on('click', $.proxy(this.ce, this));
+            $('.c').on('click', $.proxy(this.c, this));
+            $('.equal').on('click', $.proxy(this.equals, this));
           },
 
           add: function(a, b) {
@@ -43,15 +46,26 @@
           },
 
           ce: function() {
-            this.operation = undefined;
+            $('#current_num p').text('0');
+            this.newEntry = true;
           },
 
           c: function() {
-
+            this.ce();
+            $('#operation_window p').text('');
           },
 
-          equals: function() {
+          equals: function(e) {
+            let operation = $('#operation_window p').text();
+            let nums = operation.split(/[+\-/%x]/g).map((number) => Number(number));
+            nums.pop();
+            nums.push(Number($('#current_num p').text()));
+            let operations = operation.replace(/[0-9\.]/g, '').split('');
 
+            $('#operation_window p').text('');
+            $('#current_num p').text(this.calculate(nums.slice(0), operations.slice(0), true));
+            this.newEntry = true;
+            return;
           },
 
           getOperation: function(operation) {
@@ -80,13 +94,12 @@
 
             $('#current_num p').text(newEntry);
             this.newEntry = true;
-            // implement a queue for calculating each pair of numbers
-            // console.log(operations);
-            // console.log(nums);
           },
 
-          calculate: function(allNums, allOperations) {
-            allOperations.pop();
+          calculate: function(allNums, allOperations, eql) {
+            if (eql === undefined) {
+              allOperations.pop();           
+            }
 
             let result = 0;
 
@@ -116,6 +129,7 @@
               this.newEntry = false;
               $('#current_num p').text(num);
             } else if ($entry === '0' && num === '.' || $entry !== '0') { 
+              this.newEntry = false;
               $('#current_num p').text($entry + num);
             } else {
               $('#current_num p').text(num);
