@@ -12,31 +12,34 @@
         let calculator = {
           init: function() {
             this.bindEvents();
+            this.newEntry = true;
             this.ce();
           },
 
           bindEvents: function() {
-
+            $('.num').on('click', $.proxy(this.concatDigit, this));
+            $('.neg').on('click', $.proxy(this.negatize, this));
+            $('.operation').on('click', $.proxy(this.concatOperation, this));
           },
 
-          add: function() {
-
+          add: function(a, b) {
+            return a + b;
           },
 
-          subtract: function() {
-
+          subtract: function(a, b) {
+            return a - b;
           },
 
-          multiply: function() {
-
+          multiply: function(a, b) {
+            return a * b;
           },
 
-          divide: function() {
-
+          divide: function(a, b) {
+            return a / b;
           },
 
-          modulo: function() {
-
+          modulo: function(a, b) {
+            return a % b;
           },
 
           ce: function() {
@@ -47,18 +50,106 @@
 
           },
 
-          negative: function() {
-
-          },
-
-          decimal: function() {
-
-          },
-
           equals: function() {
 
           },
+
+          getOperation: function(operation) {
+            switch (operation) {
+              case '+':
+                return this.add;
+              case '-':
+                return this.subtract;
+              case 'x':
+                return this.multiply;
+              case '/':
+                return this.divide;
+              case '%':
+                return this.modulo;
+            }
+          },
+
+          getNewEntry: function() {
+            let operation = $('#operation_window p').text();
+
+            let nums = operation.split(/[+\-/%x]/g).map((number) => Number(number));
+            nums.pop();
+
+            let operations = operation.replace(/[0-9\.]/g, '').split('');
+            let newEntry = this.calculate(nums.slice(0), operations.slice(0));
+
+            $('#current_num p').text(newEntry);
+            this.newEntry = true;
+            // implement a queue for calculating each pair of numbers
+            // console.log(operations);
+            // console.log(nums);
+          },
+
+          calculate: function(allNums, allOperations) {
+            allOperations.pop();
+
+            let result = 0;
+
+            while (allNums.length > 1) {
+              let firstNum = allNums.shift();
+              let secondNum = allNums.shift();
+              let operation = this.getOperation(allOperations.shift());
+
+              result = operation(firstNum, secondNum);
+              allNums.unshift(operation(firstNum, secondNum));
+            }
+
+            return result;
+          },
+
+          concatDigit: function(e) {
+            e.preventDefault();
+            
+            let num = e.target.textContent;
+            let $entry = $('#current_num p').text();
+
+            if (num === '.' && $entry.includes(num)) {
+              return;
+            }
+
+            if (this.newEntry === true && num !== '.') {
+              this.newEntry = false;
+              $('#current_num p').text(num);
+            } else if ($entry === '0' && num === '.' || $entry !== '0') { 
+              $('#current_num p').text($entry + num);
+            } else {
+              $('#current_num p').text(num);
+            }
+          },
+
+          concatOperation: function(e) {
+            e.preventDefault();
+
+            console.log(e.target.textContent);
+
+            let operation = e.target.textContent;
+            let $window = $('#operation_window p').text();
+            let $entry = $('#current_num p').text();
+
+            $window += $entry + operation;
+            $('#operation_window p').text($window);
+            this.getNewEntry();
+          },
+
+          negatize: function(e) {
+            e.preventDefault();
+
+            let $entry = $('#current_num p').text();
+
+            if ($entry[0] !== '-' && $entry[0] !== '0') {
+              $('#current_num p').text('-' + $entry);
+            }
+
+            return;
+          },
         };
+
+        calculator.init();
       });
     </script>
     <style>
@@ -96,7 +187,7 @@
         cursor: pointer;
         box-shadow: 1px 1px purple;
         border-radius: 5px;
-        transition: background-color .4s;
+        transition: background-color .2s;
         background-color: #ededed;
       }
 
@@ -105,45 +196,62 @@
       }
 
       #operation_window, #current_num {
-        height: 30px;
+        height: 40px;
         margin-bottom: 10px;
         background-color: white;
         border: 1px solid black;
         border-radius: 5px;
         cursor: not-allowed;
+        font-size: 1rem;
       }
 
       footer {
         margin-top: 15px;
         text-align: center;
       }
+
+      #current_num p, #operation_window p {
+        margin: 0 auto;
+        margin-top: 10px;
+        text-align: right;
+        margin-right: 20px;
+      }
+
+      #operation_window p {
+        font-size: .7rem;
+      }
+
     </style>
   </head>
   <body>
     <main id="calculator"> 
-      <section id="operation_window"></section>
-      <section id="current_num"></section>
+      <section id="operation_window">
+        <p></p>
+      </section>
+      <section id="current_num">
+        <p>0</p>
+      </section>
       <section id="buttons">
         <button class="ce">CE</button>
         <button class="c">C</button>
         <button class="neg">NEG</button>
-        <button class="divide">/</button>
-        <button class="seven">7</button>
-        <button class="eight">8</button>
-        <button class="nine">9</button>
-        <button class="multiply">x</button>
-        <button class="four">4</button>
-        <button class="five">5</button>
-        <button class="six">6</button>
-        <button class="subtract">-</button>
-        <button class="one">1</button>
-        <button class="two">2</button>
-        <button class="three">3</button>
-        <button class="add">+</button>
-        <button class="zero">0</button>
-        <button class="decimal">.</button>
-        <button class="modulo">%</button>
-        <button class="equals">=</button>
+        <button class="operation">/</button>
+        <button class="num">7</button>
+        <button class="num">8</button>
+        <button class="num">9</button>
+        <button class="operation">x</button>
+        <button class="num">4</button>
+        <button class="num">5</button>
+        <button class="num">6</button>
+        <button class="operation">-</button>
+        <button class="num">1</button>
+        <button class="num">2</button>
+        <button class="num">3</button>
+        <button class="operation">+</button>
+        <button class="num">0</button>
+        <button class="num">.</button>
+        <button class="operation">%</button>
+        <button class="equal">=</button>
       </section>
     </main>
     <footer>Created by Jordan Moore</footer>

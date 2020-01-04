@@ -257,4 +257,8 @@ The calculator can be reset with:
 `C`: only resets the number input (number can be input and uses the previous number input and operation to calculate)
 `NEG`: converts current number input to negative (doesn't work with zero)
 
-`.` is used for decimals
+`.` is used for decimals.
+
+When an operation is clicked, it is added to the string of operations in the top window. The number in the second window precedes the operation being added. When `=` is clicked, the equation is computed with whatever number is in the second window being placed in front of the final operation.
+
+The current number in the second window is `0` at the start, and then is changed to the outcome of the equation in the first window upon pressing an operation key.
