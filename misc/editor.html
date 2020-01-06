@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+      $(function() {
+        let editor = {
+          init: function() {
+            this.bindEvents();
+          },
+
+          bindEvents: function() {
+            $('#bold').on('click', $.proxy(this.boldToggle, this));
+            $('#italic').on('click', $.proxy(this.italicToggle, this));
+            $('#underline').on('click', $.proxy(this.underlineToggle, this));
+            $('#strikethrough').on('click', $.proxy(this.strikeToggle, this));
+            $('#link').on('click', $.proxy(this.addLink, this));
+            $('#list').on('click', $.proxy(this.createList, this));
+            $('#list-ol').on('click', $.proxy(this.createOrderedList, this));
+            $('#align-left').on('click', $.proxy(this.leftAlign, this));
+            $('#align-center').on('click', $.proxy(this.centerAlign, this));
+            $('#align-right').on('click', $.proxy(this.rightAlign, this));
+            $('#align-justify').on('click', $.proxy(this.justifyAlign, this));
+          },
+
+          boldToggle: function() {
+            return document.execCommand('bold');
+          },
+
+          italicToggle: function() {
+            return document.execCommand('italic');
+          },
+
+          underlineToggle: function() {
+            return document.execCommand('underline');
+          },
+
+          strikeToggle: function() {
+            return document.execCommand('strikethrough');
+          },
+
+          addLink: function() {
+            let answer = prompt('Insert the link.');
+            return document.execCommand('createLink', null, answer);
+          },
+
+          createList: function() {
+            return document.execCommand('insertUnorderedList');
+          },
+
+          createOrderedList: function() {
+            return document.execCommand('insertOrderedList');
+          },
+
+          leftAlign: function() {
+            return document.execCommand('justifyLeft');
+          },
+
+          centerAlign: function() {
+            return document.execCommand('justifyCenter');
+          },
+
+          rightAlign: function() {
+            return document.execCommand('justifyRight');
+          },
+
+          justifyAlign: function() {
+            return document.execCommand('justifyFull');
+          },
+        };
+
+        editor.init();
+      });
+    </script>
+    <style>
+      body {
+        font-size: 1.2rem;
+        background-color: #2CA58D;
+        font-family: monospace;
+      }
+
+      #editor {
+        display: block;
+        margin: 0 auto;
+        width: 700px;
+        margin-top: 100px;
+      }
+
+      #toolbar {
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        padding: 5px;
+        background-color: gray;
+        border-radius: 5px 5px 0 0;
+        border-bottom: 1px solid black;
+        box-shadow: 1px 0 black;
+      }
+
+      #toolbar button {
+        cursor: pointer;
+      }
+
+      #text {
+        width: 700px;
+        height: 700px;
+        background-color: white;
+        cursor: text;
+        box-shadow: 1px 2px black;
+        border-radius: 0 0 5px 5px;
+        box-sizing: border-box;
+        padding: 5px;
+      }
+
+      footer {
+        margin-top: 50px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="editor">
+      <section id="toolbar">
+        <button id="bold" class="fa fa-bold"></button>
+        <button id="italic" class="fa fa-italic"></button>
+        <button id="underline" class="fa fa-underline"></button>
+        <button id="strikethrough" class="fa fa-strikethrough"></button>
+        <button id="link" class="fa fa-link"></button>
+        <button id="list" class="fa fa-list"></button>
+        <button id="list-ol" class="fa fa-list-ol"></button>
+        <button id="align-left" class="fa fa-align-left"></button>
+        <button id="align-center" class="fa fa-align-center"></button>
+        <button id="align-right" class="fa fa-align-right"></button>
+        <button id="align-justify" class="fa fa-align-justify"></button>
+      </section>
+      <section id="text" contenteditable="true"></section>
+    </main>
+    <footer>Created by Jordan Moore</footer>
+  </body>
+</html>
+
+
+<!-- https://cdn.iconscout.com/icon/premium/png-256-thumb/trash-1739005-1477127.png -->
