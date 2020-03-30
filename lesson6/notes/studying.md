@@ -73,6 +73,8 @@ An **element** represents a single resource. For instance, one blog post out of 
 
 An **event** is an object that represents an occurrence. The event object contains information about what happened and where it happened. These properties can be accessed within an event listener. Browsers can trigger events as the page loads, when certain elements are clicked on, or when the browser performs an action required by a program.
 
+Events on the web are fired inside of the browser window. They are normally attached to specific items in the window: an element, a grouping of elements, the entire window, or the HTML document loaded in the tab.
+
 UIs (user interface) are event-driven by nature. A user must do something on the page for an event to occur.
 
 The entirety of the DOM content must load, however, before JavaScript can before the DOM can be interacted with through the UI and event firings. 
@@ -92,6 +94,233 @@ To understand how events on the page can be triggered, it's important to underst
 6. Embedded assets are loaded
 7. load event fires on window
 
+### Event Listeners and Event Handlers
+
+Event listeners and event handlers are used interchangeably but do point at different constructs. Event listeners **listen** for the event happening, and the **handler** is the code that is run in response to it happening.
+
+```js
+document.addEventListener('DOMContentLoaded', function(event) {
+  // this is the event handler
+});
+
+// 'DOMContentLoaded' is the action on which the listener listens
+```
+When we define code that is to be run in response to an event firing, we register an event handler. 
+
+An object (element) receives an event. 
+
+The event handler is passed an `Event` object which contains information about what the event was, what the object the event occurred on, and where the event occurred. This information can be used to access and re-assign properties of the `target`, which is the element that had an event fired upon, or the `currentTarget`, which is the element that was registered as the target for the event.
+
+The event listener is attached to the `currentTarget` and the `target` is the element that was fired upon. This is important to realize, since events `capture` from the top of the document, all the way down to the most nested element, and then `bubble` all the way back up to the top of the document.
+
+In the capturing phase, the browser checks to see if the element's outer-most ancestor has an appropriate event handler for the fired event. This capturing process occurs until the browser finds the element that was actually clicked on.
+
+Next, the browser checks to see if the element that was clicked on (**target**) has the appropriate event handler for the fired event. If so, the event handler is run. Then, it moves to the next ancestor and performs the same operation, all the way until the browser reaches `<html>`. This behavior explains why outer elements can fire instead of nested elements.
+
+This behavior can be stopped with `e.stopPropagation`, which enforces the first handler to be run but prevents the bubbling process from moving up the chain, disallowing any more handlers to be run.
+
+This is similar to property and behavior delegation in JS. We can specify that all children of a `ul` should have a `click` event listener with a certain event handler. Now, all `li` have this event listener through the bubbling process, but each does not need to store its own event listener on itself. The bubbling process allows the `li` to delegate to the `ul` listener.
+
+```js
+$('ul').on('click', function(e) {
+  // something!
+});
+```
+### Event Listeners and Bubbling
+
+In an `eventListener` function, one can specify that the event should listen on the capturing phase, instead of the bubbling:
+
+```js
+document.querySelector('ul').addEventListener('click', function(e) {
+
+}, true);
+```
+The `true` value is used for the `useCapture` parameter, which indicates that the event of this type `click` should be dispatched to the registered listener before moving to any target beneath it in the DOM tree.
+
 ## jQuery and the DOM
 
+jQuery is a JavaScript library.
+
+At its core, it is a function which wraps a collection of DOM elements and helper methods into an object.
+
+One selects elements from the DOM by invoking methods on the jQuery object. From there, one can manipulate the selected object or elements using various helper methods.
+
+Since jQuery acts on DOM elements, we must wait for the DOM to be finished loading before using jQuery. The elements we try to select and/or manipulate will not exist if the jQuery is used before the DOM is finished loading.
+
+### DOM ready? 
+
+We need to know that the DOM is finished loading so that we can execute our jQuery. For this, we use a callback called the **DOM Ready Callback**. Here's an example:
+
+```js
+$(document).ready(function() {
+  // DOM loaded, ready, IMG tags not loaded
+});
+```
+Also, we can write it shorter:
+
+```js
+$(function() {
+  // DOM loaded
+});
+```
+Since the DOM is finished loading without `<img>` tags, one must wait for the `window` to be finished loading if one wants to execute jQuery **after** `<img>` tags have been loaded.
+
+```js
+$(window).ready(function() {
+  // DOM and everything else loaded
+});
+```
+### Adding Event Listeners with jQuery
+
+jQuery makes it very easy to add event listeners on DOM elements.
+
+```js
+function handleClick(e) { // event handler
+  // do something!
+}
+
+$('a').on('click', $.proxy(this.handleClick, this)); // listener
+```
+The event listener is the function which waits for a certain event to occur, and the event handler is the callback which is invoked in response to the event occurring.
+
+`'click'` is the event that triggers the callback function `handleClick`, which is the event handler. So, if an `<a>` element is clicked, the event listener will invoke `handleClick` in response.
+
+The `a` event listener will not listen for `<a>` elements that are added to the DOM **after** the event listener has been defined. In order to append this event listener onto elements that are added after the event listener is defined, one can use the second argument of the `on` method to specify which element to always give a certain event listener to.
+
+```js
+$('#parent-element').on('click', '.child-element', $.proxy(this.handleClick, this));
+```
+According to the previous code, the `click` event listener will be defined for any `child-element` under `#parent-element`.
+
 ## Communicating with the server through XHR and rendering the response
+
+`XHR` is a `XMLHttpRequest`. XHR objects are used to interact with servers. One can retrieve data from a URL without needing a full page refresh, as XHR is asynchronous. XHR can be used for fetching other types of data, not just XML. 
+
+One creates an `XHR` object by invoking the `XMLHttpRequest` function with the `new` keyword.
+
+```js
+const request = new XMLHttpRequest();
+```
+This constructor function takes no parameters.
+
+### The Basic Flow
+
+Essentially, an `XHR` object just represents an HTTP request, so it does the following:
+
+1. Create `XMLHttpRequest` object.
+2. Open a URL.
+3. Send the request.
+4. Do something with the response data.
+
+So long as the parameter passed to `XMLHttpRequest` is `undefined` or `true`, the request will be processed asynchronously. Anything else, the request will be sent synchronously, which is undesirable because it will block other parts/events of a program from firing.
+
+### How do we access the response or tell how the request is going?
+
+Event listeners enable us to listen to various events which happen during the request being processed.
+
+The process for using event listeners with `XHR` objects is:
+
+1. Create `XHR` object.
+2. Add event listeners to the object.
+3. Open the url.
+
+```js
+function updateProgress(e) {
+  // do something while request is progressing
+}
+
+function requestFinished(e) {
+  alert('Request complete.');
+}
+
+function requestFailed(e) {
+  alert('Error occurred during request.');
+}
+
+function requestCancelled(e) {
+  alert('Request cancelled.');
+}
+
+let firstRequest = new XMLHttpRequest();
+
+firstRequest.addEventListener("progress", updateProgress);
+firstRequest.addEventListener("load", requestFinished);
+firstRequest.addEventListener("error", requestFailed);
+firstRequest.addEventListener("abort", requestCancelled);
+
+firstRequest.open();
+```
+A simpler way to avoid having to write separate event listeners for `abort`, `load`, and `error` is to use the `loadend` event listener to listen for all three events.
+
+However, `loadend` does not specify which ending the request resulted in, so the use case must be general to all scenarios.
+
+### Methods for XHR
+
+#### `open()`
+
+`open` is a method for `XHR` objects which takes the following parameters:
+
+1. method (POST, GET, etc)
+2. url (string)
+3. async (boolean)
+4. user (default null)
+5. password (default null)
+
+The `open` method initializes a new request. It can also re-initialize an already existing request.
+
+#### send()
+
+`send` obviously sends the request to the server. When the request is asynchronous, the method returns immediately and the response is delivered and accessed through events and listeners. If the request is synchronous, the method only returns once the response has come in.
+
+`send()` takes one optional parameter, `body`, which represents the body sent along with an HTTP request. The body contains data that is used to update data on a server.
+
+#### setRequestHeader()
+
+This method does exactly what you think it would do: it sets the value of an HTTP request header. 
+
+This method must be invoked **after** calling `open()` but before calling `send()`. This method may be called multiple times for the same header; the values will be merged into a single header.
+
+This method takes two arguments: `header`, which is the name of the header to give a value; `value`, the value to set as the body of the provided `header`.
+
+### Examples
+
+Let's make a **POST** request with `XHR`.
+
+```js
+const data = { 
+  reg: 'string',
+  str: 'string STRING',
+  opt: 'i'
+};
+
+let xhr = new XMLHttpRequest();
+
+xhr.onload = function(e) {
+  // do stuff with regex return data
+};
+
+// or: xhr.addEventListener("load", function(e) {});
+
+xhr.onerror = function(e) {
+  // callback for if request encounters error
+};
+
+xhr.onabort = function(e) {
+  // callback for if request is aborted and abort event is received by this object
+};
+
+xhr.open("POST", 'glacialwhatever/test', true);
+xhr.send(JSON.stringify(data));
+```
+Make a **GET** request.
+
+```js
+let xhr = new XMLHttpRequest();
+
+xhr.onload = function(e) {};
+xhr.onerror = function(e) {};
+xhr.onabort = function(e) {};
+
+xhr.open('GET', '/server', true);
+xhr.send();
+```

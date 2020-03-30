@@ -26,18 +26,18 @@
       function createFormPrompt() {
         let formTemplater = Handlebars.compile($('#form_template').html());
 
-        $('#fullscreen_container').fadeIn(150);
+        $('#fullscreen_container').fadeIn(10);
         $('#fullscreen_container').append(formTemplater());
       }
 
       function fadeOutContainer(element) {
         $('#fullscreen_container').find(`${element}`).remove();
-        $('#fullscreen_container').fadeOut(150);
+        $('#fullscreen_container').hide();
       }
 
       function fadeInContainer(element) {
         $(`#fullscreen_container ${element}`).fadeIn(100).remove();
-        $('#fullscreen_container').fadeIn(150);
+        $('#fullscreen_container').fadeIn(10);
       }
 
       $(function() {
