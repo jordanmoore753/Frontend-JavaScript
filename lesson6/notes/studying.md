@@ -137,6 +137,54 @@ document.querySelector('ul').addEventListener('click', function(e) {
 ```
 The `true` value is used for the `useCapture` parameter, which indicates that the event of this type `click` should be dispatched to the registered listener before moving to any target beneath it in the DOM tree.
 
+### Capturing and Bubbling
+
+Capturing and bubbling are two processes that occur when an event listener is activated on an element.
+
+Capturing happens first, and then bubbling.
+
+The browser will run a capturing phase when an event is fired on an element with parent element(s). During this capturing phase, the browser will check to see if the element's **outer-most** ancestor (`<html`>) has an event handler which handles the type of event that was triggered. Once the browser finds the element that has the associated event listener, it is done capturing.
+
+Next is bubbling. From the element that was the actual target of the event, the browser will check to see if it really has the event listener. If it does, the browser will invoke that event handler. Then, the bubbling continues up to each parent element until `<html>` is reached.
+
+This means that each parent element that also has an event handler for that given event will be invoked. This is annoying behavior that is easy to avoid with `stopPropagation`, which is a method on the `event` object.
+
+By default, all event handlers are registered for the bubbling phase; however, as we've seen above, it's possible to register the event handler for the capturing phase.
+
+```js
+document.getElementById('#one').addEventListener('click', function(e) {
+  // something
+}, true); // true makes it capturing phase
+```
+In jQuery, one cannot use the capturing phase for invoking event handlers. 
+
+### Event Delegation
+
+Obviously, it would save a lot of space and time to have all child elements, say `<li>`, delegate event listeners to their parent element `<ul>`. This is called **event delegation**, and is actually similar to object delegation in JS.
+
+Instead of doing the following, which is attaching an event listener to each `li` of the `#first` `<ul>` tag. We can attach the event listener to the `#first` element and rely on **bubbling** to invoke the event handler.
+
+```js
+$('li').on('click', $.proxy(this.something, this)); // not delegation
+$('#first').on('click', $.proxy(this.something, this)); // delegation
+
+something(e) {
+  e.preventDefault();
+  let listItem = e.target; // access the actual clicked element with target
+  // do something
+}
+```
+However, one must check that the `target` is actually pointing at the right type of tag, as one could click the `ul` element's margin/padding and trigger the event.
+
+```js
+something(e) {
+  e.preventDefault();
+
+  if (e.target && e.target.nodeName === 'LI') {
+    // something!
+  }
+}
+```
 ## jQuery and the DOM
 
 jQuery is a JavaScript library.
